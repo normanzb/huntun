@@ -14,32 +14,7 @@ var prompt = new UIPrompt({
             label: 'Link URL',
             events: {
                 onClick: function() {
-                    var me = this;
-                    var CQ = window.CQ;
-
-                    if (!CQ || !CQ.BrowseDialog) {
-                        window.alert('Only availabe in CQ environment');
-                        return;
-                    }
-
-                    var browseDialog = new CQ.BrowseDialog({
-                        path:"/content",
-                        title:"Websites",
-                        ok: function(){
-                            let path = this.getSelectedPath();
-                            if (path[0] != '/') {
-                                path = '/' + path;
-                            }
-                            me.model.text = path;
-                            me.viewModel.redraw(true);
-                            browseDialog.close();
-                        }
-                    });
-                    var zseed = CQ.Ext.WindowMgr.zseed;
-                    CQ.Ext.WindowMgr.zseed = 10000;
-                    browseDialog.show();
-                    CQ.Ext.WindowMgr.zseed = zseed;
-                    prompt.clickToHide.exceptions.push(browseDialog.el.dom);
+                    window.alert('clicked');
                 }
             }
         }),
