@@ -1,0 +1,22 @@
+{
+  "name": "huntun",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "animejs": "^2.0.2",
+    "blueimp-md5": "^2.8.0",
+    "browserify": "^14.1.0",
+    "domvm": "^3.0.5",
+    "exorcist": "^0.4.0",
+    "lessify": "^1.0.1",
+    "resize-sensor": "0.0.6",
+    "stylis": "^3.2.8",
+    "dom-xinput": "0.0.4"
+  },
+  "scripts": {
+    "build": "mkdir -p ./dist/ && browserify --standalone index --debug --transform [ lessify ] ./index  | exorcist ./dist/bundle.js.map > ./dist/bundle.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
