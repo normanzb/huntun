@@ -1,7 +1,7 @@
 'use strict';
 
 var domvm = require('domvm');
-var StyleSheet = require('../utils/StyleSheet');
+var StyleSheet = require('../../utils/StyleSheet');
 var UIBase = require('../Base');
 var XInput = require('dom-xinput');
 var el = domvm.defineElement;

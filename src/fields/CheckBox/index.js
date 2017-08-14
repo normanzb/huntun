@@ -4,8 +4,8 @@ var domvm = require('domvm');
 var iv = domvm.injectView;
 var el = domvm.defineElement;
 
-var StyleSheet = require('../utils/StyleSheet');
-var UIClose = require('../Close');
+var StyleSheet = require('../../utils/StyleSheet');
+var UIClose = require('../../Close');
 var UIBase = require('../Base');
 
 var PREFIX_CSS = 'context-ui-checkbox';
@@ -23,6 +23,7 @@ var style = new StyleSheet(`
         display: flex;
         justify-content: flex-start;
         align-items: center;
+        cursor: pointer;
 
         > .ui-cross-container
         {
@@ -95,7 +96,9 @@ style.fonts.google.push('Maitree');
 var view = {
     render: function(vm, model) {
         return el('div.' + style.id + '.' + style.modifiers[model.theme].name + 
-                (model.active?'.active':''), [
+                (model.active?'.active':''), {
+                    onclick: model.prvt.onClick
+                }, [
                 el('div.inner', [
                     el('div.ui-cross-container', [model.prvt.cross]),
                     el('input.check-box', {
@@ -118,7 +121,12 @@ class Ctor extends UIBase {
             active: false
         }, me.model, {
             prvt: {
-                cross: null
+                cross: null,
+                onClick () {
+                    me.cross.active = !me.cross.active;
+                    me.model.active = me.cross.active;
+                    me.viewModel.redraw(true);
+                }
             }
         });
         me.cross = new UIClose({
@@ -128,11 +136,6 @@ class Ctor extends UIBase {
             size: SIZE
         });
         me.model.prvt.cross = iv(me.cross.viewModel);
-        me.cross.onClick = function() {
-            me.cross.active = !me.cross.active;
-            me.model.active = me.cross.active;
-            me.viewModel.redraw(true);
-        };
 
         me.init(view, style);
     }

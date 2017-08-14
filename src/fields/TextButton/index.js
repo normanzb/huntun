@@ -1,8 +1,8 @@
 'use strict';
 
-var StyleSheet = require('../utils/StyleSheet');
+var StyleSheet = require('../../utils/StyleSheet');
 var UIBase = require('../Base');
-var UITextField = require('../TextField');
+var UITextField = require('../Text');
 var anime = require('animejs');
 var domvm = require('domvm');
 var el = domvm.defineElement;

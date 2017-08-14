@@ -1,9 +1,9 @@
 'use strict';
 const UIPrompt = require('./src/Prompt');
 const UILabel = require('./src/Label');
-const UIPathField = require('./src/PathField');
-const UITextField = require('./src/TextField');
-const UICheckBoxField = require('./src/CheckBoxField');
+const UIPathField = require('./src/fields/TextButton');
+const UITextField = require('./src/fields/Text');
+const UICheckBoxField = require('./src/fields/CheckBox');
 
 var prompt = new UIPrompt({
     fields: [
