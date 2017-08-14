@@ -1,7 +1,7 @@
 {
   "name": "huntun",
   "version": "1.0.0",
-  "description": "",
+  "description": "Grab it to go ui solution based on domvm",
   "main": "index.js",
   "dependencies": {
     "animejs": "^2.0.2",
