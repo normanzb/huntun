@@ -1,6 +1,7 @@
 'use strict';
 
 var domvm = require('domvm');
+var config = require('../config');
 var StyleSheet = require('../utils/StyleSheet');
 var ResizeSensor = require('resize-sensor');
 var UIBase = require('../Base');
@@ -64,7 +65,7 @@ var style = new StyleSheet(`
     prefix: PREFIX_CSS
 });
 
-style.fonts.google.push('Maitree');
+style.fonts.google.push(config.fields.fontFamily);
 
 style.modifiers[MODIFIER_START_VISIBLE_ANIMATE] = `
     > .border

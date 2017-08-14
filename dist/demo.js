@@ -12,6 +12,7 @@ var prompt = new UIPrompt({
             text: 'Hit <enter> to create the link'
         }),
         new UIPathField({
+            name: 'href',
             label: 'Link URL',
             events: {
                 onClick: function() {
@@ -20,16 +21,18 @@ var prompt = new UIPrompt({
             }
         }),
         new UITextField({
+            name: 'title',
             label: 'Link Title'
         }),
         new UICheckBoxField({
+            name: 'target',
             label: 'Open in new window?'
         })
     ]
 });
 
 prompt.mount(document.body);
-},{"./src/Label":10,"./src/Prompt":11,"./src/fields/CheckBox":13,"./src/fields/Text":14,"./src/fields/TextButton":15}],2:[function(require,module,exports){
+},{"./src/Label":10,"./src/Prompt":11,"./src/fields/CheckBox":14,"./src/fields/Text":15,"./src/fields/TextButton":16}],2:[function(require,module,exports){
 /*
  2017 Julian Garnier
  Released under the MIT license
@@ -1894,6 +1897,7 @@ module.exports = Ctor;
 'use strict';
 
 var domvm = require('domvm');
+var config = require('../config');
 var StyleSheet = require('../utils/StyleSheet');
 var UIBase = require('../Base');
 var el = domvm.defineElement;
@@ -1950,6 +1954,12 @@ var style = new StyleSheet(`
             display: inline-flex;
             justify-content: center;
             align-items: center;
+            transform: rotate(0);
+
+            transition-property: transform;
+            transition-duration: .3s;
+            transition-delay: .05s;
+            transition-timing-function: cubic-bezier(.52,.02,.19,1.02);
         }
         > .text.no-cross
         {
@@ -1966,6 +1976,10 @@ var style = new StyleSheet(`
         }
         > .inner
         {
+            > .text
+            {
+                transform: rotate(90deg);
+            }
             > .text.no-cross
             {
                 display inline-flex;
@@ -1977,14 +1991,14 @@ var style = new StyleSheet(`
 });
 
 style.modifiers[NAME_THEME_OCEAN] = `
-    background-color: #FFF;
+    background-color: ${config.themes.ocean.assisting};
     &:before
     {
-        background-color: #039BE5;
+        background-color: ${config.themes.ocean.prominent};
     }
     &.active
     {
-        color: #FFF;
+        color: ${config.themes.ocean.assisting};
     }
 `;
 
@@ -2000,10 +2014,14 @@ var view = {
                 onclick: model.events.onClick,
                 onmouseenter: model.prvt.mouseEnterHandler,
                 onmouseleave: model.prvt.mouseLeaveHandler,
-                style: model.size?('width: ' + model.size + 
-                    'px; height: ' + model.size + 
-                    'px; border-radius: ' + (model.size / 2) + 
-                    'px; font-size: ' + (model.size / 2) +'px;' ):''
+                style: model.size?(`
+                    width: ${model.size}px;
+                    height: ${model.size}px;
+                    border-radius: ${(model.size / 2)}px;
+                    font-size: ${(model.size / 2)}px;
+                    line-height: ${(model.size / 2) + 1}px;
+                    `
+                ):''
             }, [
                 el('div.inner', [
                     el('span.text' + 
@@ -2069,10 +2087,11 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../Base":8,"../utils/StyleSheet":18,"domvm":5}],10:[function(require,module,exports){
+},{"../Base":8,"../config":12,"../utils/StyleSheet":19,"domvm":5}],10:[function(require,module,exports){
 'use strict';
 
 var domvm = require('domvm');
+var config = require('../config');
 var StyleSheet = require('../utils/StyleSheet');
 var UIBase = require('../Base');
 var el = domvm.defineElement;
@@ -2087,7 +2106,7 @@ var style = new StyleSheet(`
     prefix: PREFIX_CSS
 });
 
-style.fonts.google.push('Maitree');
+style.fonts.google.push(config.fields.fontFamily);
 
 var view = {
     render: function(vm, data) {
@@ -2111,10 +2130,11 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../Base":8,"../utils/StyleSheet":18,"domvm":5}],11:[function(require,module,exports){
+},{"../Base":8,"../config":12,"../utils/StyleSheet":19,"domvm":5}],11:[function(require,module,exports){
 'use strict';
 
 var domvm = require('domvm');
+var config = require('../config');
 var StyleSheet = require('../utils/StyleSheet');
 var ResizeSensor = require('resize-sensor');
 var UIBase = require('../Base');
@@ -2178,7 +2198,7 @@ var style = new StyleSheet(`
     prefix: PREFIX_CSS
 });
 
-style.fonts.google.push('Maitree');
+style.fonts.google.push(config.fields.fontFamily);
 
 style.modifiers[MODIFIER_START_VISIBLE_ANIMATE] = `
     > .border
@@ -2336,7 +2356,24 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../Base":8,"../Close":9,"../utils/StyleSheet":18,"domvm":5,"resize-sensor":6}],12:[function(require,module,exports){
+},{"../Base":8,"../Close":9,"../config":12,"../utils/StyleSheet":19,"domvm":5,"resize-sensor":6}],12:[function(require,module,exports){
+'use strict';
+
+module.exports = {
+	fields: {
+		fontFamily: 'Maitree',
+		fontSize: '12px',
+		lineHeight: '1.2em',
+		marginBlock: '14px'
+	},
+	themes: {
+		ocean: {
+			prominent: '#039BE5',
+			assisting: '#FFF'
+		}
+	}
+};
+},{}],13:[function(require,module,exports){
 'use strict';
 
 var UIBase = require('../../Base');
@@ -2361,29 +2398,30 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../../Base":8}],13:[function(require,module,exports){
+},{"../../Base":8}],14:[function(require,module,exports){
 'use strict';
 
 var domvm = require('domvm');
 var iv = domvm.injectView;
 var el = domvm.defineElement;
 
+var config = require('../../config');
 var StyleSheet = require('../../utils/StyleSheet');
 var UIClose = require('../../Close');
 var UIBase = require('../Base');
 
-var PREFIX_CSS = 'context-ui-checkbox';
+var PREFIX_CSS = 'context-ui-fields-checkbox';
 var NAME_THEME_OCEAN = 'ocean';
-var SIZE = 15;
+var SIZE = 17;
 
 var style = new StyleSheet(`
-    font-family: Maitree;
-    font-size: 12px;
-    line-height: 1.2em;
+    font-family: ${config.fields.fontFamily};
+    font-size: ${config.fields.fontSize};
+    line-height: ${config.fields.lineHeight};
 
     > .inner 
     {
-        margin: 14px auto;
+        margin: ${config.fields.marginBlock} auto;
         display: flex;
         justify-content: flex-start;
         align-items: center;
@@ -2395,6 +2433,8 @@ var style = new StyleSheet(`
             width: ${SIZE}px;
             height: ${SIZE}px;
             border-radius: ${SIZE/2}px;
+            border-width: 1px;
+            border-style: solid;
 
             transition-property: border, background-color;;
             transition-duration: .3s;
@@ -2448,14 +2488,14 @@ style.modifiers[NAME_THEME_OCEAN] = `
         {
             > .ui-cross-container
             {
-                border: 1px solid #FFF;
+                border-color: ${config.themes.ocean.assisting};
                 background-color: transparent;
             }
         }
     }
 `;
 
-style.fonts.google.push('Maitree');
+style.fonts.google.push(config.fields.fontFamily);
 
 var view = {
     render: function(vm, model) {
@@ -2506,22 +2546,25 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../../Close":9,"../../utils/StyleSheet":18,"../Base":12,"domvm":5}],14:[function(require,module,exports){
+},{"../../Close":9,"../../config":12,"../../utils/StyleSheet":19,"../Base":13,"domvm":5}],15:[function(require,module,exports){
 'use strict';
 
 var domvm = require('domvm');
+var config = require('../../config');
 var StyleSheet = require('../../utils/StyleSheet');
 var UIBase = require('../Base');
 var XInput = require('dom-xinput');
 var el = domvm.defineElement;
-var PREFIX_CSS = 'context-ui-textfield';
+var PREFIX_CSS = 'context-ui-fields-text';
 var NAME_THEME_OCEAN = 'ocean';
 var MODIFIER_HAS_INPUT = 'has-input';
 var MODIFIER_HAS_FOCUS = 'has-focus';
 var BEZIER_NORMAL = 'transition-timing-function: cubic-bezier(.52,.02,.19,1.02);';
 
 var style = new StyleSheet(`
-    font-family: Maitree;
+    font-family: ${config.fields.fontFamily};
+    font-size: ${config.fields.fontSize};
+    line-height: ${config.fields.lineHeight};
     position: relative;
     
     > .inner
@@ -2541,7 +2584,7 @@ var style = new StyleSheet(`
             ${BEZIER_NORMAL}
         }
         position: relative;
-        margin: 14px 0;
+        margin: ${config.fields.marginBlock} 0;
 
         transition-property: box-shadow;
         transition-duration: .3s;
@@ -2611,12 +2654,12 @@ style.modifiers[MODIFIER_HAS_FOCUS] = `
 `;
 
 style.modifiers[NAME_THEME_OCEAN] = `
-    background-color: #FFF;
+    background-color: ${config.themes.ocean.assisting};
     > .inner
     {
         &:before 
         {
-            background-color: #039be5;
+            background-color: ${config.themes.ocean.prominent};
         }
 
         box-shadow: 0 1px 0 #EFEFEF;
@@ -2624,11 +2667,6 @@ style.modifiers[NAME_THEME_OCEAN] = `
         > .placeholder 
         {
             color: #AEAEAE;
-            font-size: 12px;
-        }
-        > .text
-        {
-            font-size: 12px;
         }
     }
     &:hover 
@@ -2640,6 +2678,8 @@ style.modifiers[NAME_THEME_OCEAN] = `
     }
     
 `;
+
+style.fonts.google.push(config.fields.fontFamily);
 
 var view = {
     render: function(vm, data) {
@@ -2710,9 +2750,10 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../../utils/StyleSheet":18,"../Base":12,"dom-xinput":4,"domvm":5}],15:[function(require,module,exports){
+},{"../../config":12,"../../utils/StyleSheet":19,"../Base":13,"dom-xinput":4,"domvm":5}],16:[function(require,module,exports){
 'use strict';
 
+var config = require('../../config');
 var StyleSheet = require('../../utils/StyleSheet');
 var UIBase = require('../Base');
 var UITextField = require('../Text');
@@ -2722,14 +2763,14 @@ var el = domvm.defineElement;
 var iv = domvm.injectView;
 var svg = domvm.defineSvgElement;
 
-var PREFIX_CSS = 'context-ui-pathfield';
+var PREFIX_CSS = 'context-ui-fields-textbutton';
 
 var style = new StyleSheet(`
-    font-family: Maitree;
+    font-family: ${config.fields.fontFamily};
     display: flex;
     justify-content: stretch;
     align-items: center;
-    margin: 14px auto;
+    margin: ${config.fields.marginBlock} auto;
 
     > .inner 
     {
@@ -2784,7 +2825,7 @@ var style = new StyleSheet(`
     {
         > .select 
         {
-            color: #039be5;
+            color: {config.themes.ocean.prominent};
             transition-delay: 0s;
         }
     }
@@ -2792,7 +2833,7 @@ var style = new StyleSheet(`
     prefix: PREFIX_CSS
 });
 
-style.fonts.google.push('Maitree');
+style.fonts.google.push(config.fields.fontFamily);
 
 var view = {
     render: function(vm, data) {
@@ -2802,7 +2843,7 @@ var view = {
                         data.prvt.textField
                     ]),
                     el('div.inner.end' + (data.prvt.mouseentered?'.is-hovered':''), {
-                        onmouseover: function(evt){
+                        onmouseenter: function(evt){
                             if (evt.currentTarget !== evt.target) {
                                 return;
                             }
@@ -2820,7 +2861,7 @@ var view = {
                             }
                             vm.redraw(true);
                         },
-                        onmouseout: function(evt) {
+                        onmouseleave: function(evt) {
                             if (evt.currentTarget !== evt.target) {
                                 return;
                             }
@@ -2851,11 +2892,12 @@ var view = {
                                     var ani = anime({
                                         targets: path,
                                         d: 'M2,4 C22,-0 52,-0 72,4 C74,12 74,20 72,29 C52,33 22,33 2,29 C0,20 0,12 2,4 Z',
-                                        stroke: '#039be5',
+                                        stroke: config.themes.ocean.prominent,
                                         strokeWidth: 1,
                                         duration: 500,
-                                        elasticity: 500,
-                                        autoplay: false
+                                        elasticity: 300,
+                                        autoplay: false,
+                                        easing: 'easeInOutBack'
                                     });
                                     vm._svgAnime = ani;
                                 }
@@ -2874,8 +2916,9 @@ var view = {
                                         targets: node.el,
                                         scale: 1.2,
                                         duration: 500,
-                                        elasticity: 500,
-                                        autoplay: false
+                                        elasticity: 300,
+                                        autoplay: false,
+                                        easing: 'easeInOutBack'
                                     });
                                     vm._sltAnime = ani;
                                 }
@@ -2912,7 +2955,7 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../../utils/StyleSheet":18,"../Base":12,"../Text":14,"animejs":2,"domvm":5}],16:[function(require,module,exports){
+},{"../../config":12,"../../utils/StyleSheet":19,"../Base":13,"../Text":15,"animejs":2,"domvm":5}],17:[function(require,module,exports){
 'use strict';
 
 class Modifier {
@@ -2927,7 +2970,7 @@ class Modifier {
 }
 
 module.exports = Modifier;
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 var Modifier = require('./Modifier');
 var contextMap = new WeakMap();
@@ -2950,7 +2993,7 @@ function Modifiers(context) {
 }
 
 module.exports = Modifiers;
-},{"./Modifier":16}],18:[function(require,module,exports){
+},{"./Modifier":17}],19:[function(require,module,exports){
 'use strict';
 
 var md5 = require('blueimp-md5');
@@ -2996,7 +3039,7 @@ class StyleSheet {
 
 
 module.exports = StyleSheet;
-},{"./Modifiers":17,"./cssMounter":19,"./fontLoader":20,"blueimp-md5":3,"stylis":7}],19:[function(require,module,exports){
+},{"./Modifiers":18,"./cssMounter":20,"./fontLoader":21,"blueimp-md5":3,"stylis":7}],20:[function(require,module,exports){
 'use strict';
 exports.mount = function(cssText) {
     var style = document.createElement('style');
@@ -3010,7 +3053,7 @@ exports.mount = function(cssText) {
     var head = document.documentElement.querySelector('head');
     head.appendChild(style);
 };
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 var Stylis = require('stylis');
 var mounter = require('./cssMounter');
@@ -3027,6 +3070,6 @@ module.exports.load = function(familyName) {
     mounter.mount(cssText);
     loaded[familyName] = true;
 };
-},{"./cssMounter":19,"stylis":7}]},{},[1])(1)
+},{"./cssMounter":20,"stylis":7}]},{},[1])(1)
 });
 //# sourceMappingURL=demo.js.map

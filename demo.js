@@ -11,6 +11,7 @@ var prompt = new UIPrompt({
             text: 'Hit <enter> to create the link'
         }),
         new UIPathField({
+            name: 'href',
             label: 'Link URL',
             events: {
                 onClick: function() {
@@ -19,9 +20,11 @@ var prompt = new UIPrompt({
             }
         }),
         new UITextField({
+            name: 'title',
             label: 'Link Title'
         }),
         new UICheckBoxField({
+            name: 'target',
             label: 'Open in new window?'
         })
     ]

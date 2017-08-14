@@ -1,6 +1,7 @@
 'use strict';
 
 var domvm = require('domvm');
+var config = require('../config');
 var StyleSheet = require('../utils/StyleSheet');
 var UIBase = require('../Base');
 var el = domvm.defineElement;
@@ -57,6 +58,12 @@ var style = new StyleSheet(`
             display: inline-flex;
             justify-content: center;
             align-items: center;
+            transform: rotate(0);
+
+            transition-property: transform;
+            transition-duration: .3s;
+            transition-delay: .05s;
+            transition-timing-function: cubic-bezier(.52,.02,.19,1.02);
         }
         > .text.no-cross
         {
@@ -73,6 +80,10 @@ var style = new StyleSheet(`
         }
         > .inner
         {
+            > .text
+            {
+                transform: rotate(90deg);
+            }
             > .text.no-cross
             {
                 display inline-flex;
@@ -84,14 +95,14 @@ var style = new StyleSheet(`
 });
 
 style.modifiers[NAME_THEME_OCEAN] = `
-    background-color: #FFF;
+    background-color: ${config.themes.ocean.assisting};
     &:before
     {
-        background-color: #039BE5;
+        background-color: ${config.themes.ocean.prominent};
     }
     &.active
     {
-        color: #FFF;
+        color: ${config.themes.ocean.assisting};
     }
 `;
 
@@ -107,10 +118,14 @@ var view = {
                 onclick: model.events.onClick,
                 onmouseenter: model.prvt.mouseEnterHandler,
                 onmouseleave: model.prvt.mouseLeaveHandler,
-                style: model.size?('width: ' + model.size + 
-                    'px; height: ' + model.size + 
-                    'px; border-radius: ' + (model.size / 2) + 
-                    'px; font-size: ' + (model.size / 2) +'px;' ):''
+                style: model.size?(`
+                    width: ${model.size}px;
+                    height: ${model.size}px;
+                    border-radius: ${(model.size / 2)}px;
+                    font-size: ${(model.size / 2)}px;
+                    line-height: ${(model.size / 2) + 1}px;
+                    `
+                ):''
             }, [
                 el('div.inner', [
                     el('span.text' + 

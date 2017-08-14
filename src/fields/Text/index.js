@@ -1,18 +1,21 @@
 'use strict';
 
 var domvm = require('domvm');
+var config = require('../../config');
 var StyleSheet = require('../../utils/StyleSheet');
 var UIBase = require('../Base');
 var XInput = require('dom-xinput');
 var el = domvm.defineElement;
-var PREFIX_CSS = 'context-ui-textfield';
+var PREFIX_CSS = 'context-ui-fields-text';
 var NAME_THEME_OCEAN = 'ocean';
 var MODIFIER_HAS_INPUT = 'has-input';
 var MODIFIER_HAS_FOCUS = 'has-focus';
 var BEZIER_NORMAL = 'transition-timing-function: cubic-bezier(.52,.02,.19,1.02);';
 
 var style = new StyleSheet(`
-    font-family: Maitree;
+    font-family: ${config.fields.fontFamily};
+    font-size: ${config.fields.fontSize};
+    line-height: ${config.fields.lineHeight};
     position: relative;
     
     > .inner
@@ -32,7 +35,7 @@ var style = new StyleSheet(`
             ${BEZIER_NORMAL}
         }
         position: relative;
-        margin: 14px 0;
+        margin: ${config.fields.marginBlock} 0;
 
         transition-property: box-shadow;
         transition-duration: .3s;
@@ -102,12 +105,12 @@ style.modifiers[MODIFIER_HAS_FOCUS] = `
 `;
 
 style.modifiers[NAME_THEME_OCEAN] = `
-    background-color: #FFF;
+    background-color: ${config.themes.ocean.assisting};
     > .inner
     {
         &:before 
         {
-            background-color: #039be5;
+            background-color: ${config.themes.ocean.prominent};
         }
 
         box-shadow: 0 1px 0 #EFEFEF;
@@ -115,11 +118,6 @@ style.modifiers[NAME_THEME_OCEAN] = `
         > .placeholder 
         {
             color: #AEAEAE;
-            font-size: 12px;
-        }
-        > .text
-        {
-            font-size: 12px;
         }
     }
     &:hover 
@@ -131,6 +129,8 @@ style.modifiers[NAME_THEME_OCEAN] = `
     }
     
 `;
+
+style.fonts.google.push(config.fields.fontFamily);
 
 var view = {
     render: function(vm, data) {

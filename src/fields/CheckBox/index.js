@@ -4,22 +4,23 @@ var domvm = require('domvm');
 var iv = domvm.injectView;
 var el = domvm.defineElement;
 
+var config = require('../../config');
 var StyleSheet = require('../../utils/StyleSheet');
 var UIClose = require('../../Close');
 var UIBase = require('../Base');
 
-var PREFIX_CSS = 'context-ui-checkbox';
+var PREFIX_CSS = 'context-ui-fields-checkbox';
 var NAME_THEME_OCEAN = 'ocean';
-var SIZE = 15;
+var SIZE = 17;
 
 var style = new StyleSheet(`
-    font-family: Maitree;
-    font-size: 12px;
-    line-height: 1.2em;
+    font-family: ${config.fields.fontFamily};
+    font-size: ${config.fields.fontSize};
+    line-height: ${config.fields.lineHeight};
 
     > .inner 
     {
-        margin: 14px auto;
+        margin: ${config.fields.marginBlock} auto;
         display: flex;
         justify-content: flex-start;
         align-items: center;
@@ -31,6 +32,8 @@ var style = new StyleSheet(`
             width: ${SIZE}px;
             height: ${SIZE}px;
             border-radius: ${SIZE/2}px;
+            border-width: 1px;
+            border-style: solid;
 
             transition-property: border, background-color;;
             transition-duration: .3s;
@@ -84,14 +87,14 @@ style.modifiers[NAME_THEME_OCEAN] = `
         {
             > .ui-cross-container
             {
-                border: 1px solid #FFF;
+                border-color: ${config.themes.ocean.assisting};
                 background-color: transparent;
             }
         }
     }
 `;
 
-style.fonts.google.push('Maitree');
+style.fonts.google.push(config.fields.fontFamily);
 
 var view = {
     render: function(vm, model) {

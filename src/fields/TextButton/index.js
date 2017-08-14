@@ -1,5 +1,6 @@
 'use strict';
 
+var config = require('../../config');
 var StyleSheet = require('../../utils/StyleSheet');
 var UIBase = require('../Base');
 var UITextField = require('../Text');
@@ -9,14 +10,14 @@ var el = domvm.defineElement;
 var iv = domvm.injectView;
 var svg = domvm.defineSvgElement;
 
-var PREFIX_CSS = 'context-ui-pathfield';
+var PREFIX_CSS = 'context-ui-fields-textbutton';
 
 var style = new StyleSheet(`
-    font-family: Maitree;
+    font-family: ${config.fields.fontFamily};
     display: flex;
     justify-content: stretch;
     align-items: center;
-    margin: 14px auto;
+    margin: ${config.fields.marginBlock} auto;
 
     > .inner 
     {
@@ -71,7 +72,7 @@ var style = new StyleSheet(`
     {
         > .select 
         {
-            color: #039be5;
+            color: {config.themes.ocean.prominent};
             transition-delay: 0s;
         }
     }
@@ -79,7 +80,7 @@ var style = new StyleSheet(`
     prefix: PREFIX_CSS
 });
 
-style.fonts.google.push('Maitree');
+style.fonts.google.push(config.fields.fontFamily);
 
 var view = {
     render: function(vm, data) {
@@ -89,7 +90,7 @@ var view = {
                         data.prvt.textField
                     ]),
                     el('div.inner.end' + (data.prvt.mouseentered?'.is-hovered':''), {
-                        onmouseover: function(evt){
+                        onmouseenter: function(evt){
                             if (evt.currentTarget !== evt.target) {
                                 return;
                             }
@@ -107,7 +108,7 @@ var view = {
                             }
                             vm.redraw(true);
                         },
-                        onmouseout: function(evt) {
+                        onmouseleave: function(evt) {
                             if (evt.currentTarget !== evt.target) {
                                 return;
                             }
@@ -138,11 +139,12 @@ var view = {
                                     var ani = anime({
                                         targets: path,
                                         d: 'M2,4 C22,-0 52,-0 72,4 C74,12 74,20 72,29 C52,33 22,33 2,29 C0,20 0,12 2,4 Z',
-                                        stroke: '#039be5',
+                                        stroke: config.themes.ocean.prominent,
                                         strokeWidth: 1,
                                         duration: 500,
-                                        elasticity: 500,
-                                        autoplay: false
+                                        elasticity: 300,
+                                        autoplay: false,
+                                        easing: 'easeInOutBack'
                                     });
                                     vm._svgAnime = ani;
                                 }
@@ -161,8 +163,9 @@ var view = {
                                         targets: node.el,
                                         scale: 1.2,
                                         duration: 500,
-                                        elasticity: 500,
-                                        autoplay: false
+                                        elasticity: 300,
+                                        autoplay: false,
+                                        easing: 'easeInOutBack'
                                     });
                                     vm._sltAnime = ani;
                                 }
