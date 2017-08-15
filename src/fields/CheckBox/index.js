@@ -35,7 +35,7 @@ var style = new StyleSheet(`
             border-width: 1px;
             border-style: solid;
 
-            transition-property: border, background-color;;
+            transition-property: border, background-color;
             transition-duration: .3s;
             transition-timing-function: cubic-bezier(.52,.02,.19,1.02);
 

@@ -72,7 +72,7 @@ var style = new StyleSheet(`
     {
         > .select 
         {
-            color: {config.themes.ocean.prominent};
+            color: ${config.themes.ocean.prominent};
             transition-delay: 0s;
         }
     }

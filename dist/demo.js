@@ -5,6 +5,7 @@ const UILabel = require('./src/Label');
 const UIPathField = require('./src/fields/TextButton');
 const UITextField = require('./src/fields/Text');
 const UICheckBoxField = require('./src/fields/CheckBox');
+const UIButton = require('./src/Button');
 
 var prompt = new UIPrompt({
     fields: [
@@ -27,12 +28,15 @@ var prompt = new UIPrompt({
         new UICheckBoxField({
             name: 'target',
             label: 'Open in new window?'
+        }),
+        new UIButton({
+            text: 'Submit'
         })
     ]
 });
 
 prompt.mount(document.body);
-},{"./src/Label":10,"./src/Prompt":11,"./src/fields/CheckBox":14,"./src/fields/Text":15,"./src/fields/TextButton":16}],2:[function(require,module,exports){
+},{"./src/Button":9,"./src/Label":11,"./src/Prompt":12,"./src/fields/CheckBox":15,"./src/fields/Text":16,"./src/fields/TextButton":17}],2:[function(require,module,exports){
 /*
  2017 Julian Garnier
  Released under the MIT license
@@ -1901,6 +1905,86 @@ var config = require('../config');
 var StyleSheet = require('../utils/StyleSheet');
 var UIBase = require('../Base');
 var el = domvm.defineElement;
+var PREFIX_CSS = 'context-ui-button';
+var NAME_THEME_OCEAN = 'ocean';
+
+var style = new StyleSheet(`
+    display: flex;
+
+    font-family: ${config.fields.fontFamily};
+    font-size: ${config.fields.fontSize};
+    line-height: ${config.fields.lineHeight};
+    margin: ${config.fields.marginBlock} auto;
+
+    border-radius: 2px;
+    border-width: 1px;
+    border-style: solid;
+
+    box-sizing: border-box;
+    padding: 0 .8em;
+
+    transition-property: color, background-color;;
+    transition-duration: .3s;
+    transition-timing-function: cubic-bezier(.52,.02,.19,1.02);
+
+    cursor: pointer;
+
+    > .inner
+    {
+        margin: .5em auto;
+        text-align: center;
+    }
+`, {
+    prefix: PREFIX_CSS
+});
+
+style.modifiers[NAME_THEME_OCEAN] = `
+    border-color: ${config.themes.ocean.prominent};
+    background-color: ${config.themes.ocean.assisting};
+    color: ${config.themes.ocean.prominent};
+
+    &:hover 
+    {
+        background-color: ${config.themes.ocean.prominent};
+        color: ${config.themes.ocean.assisting};
+    }
+`;
+
+style.fonts.google.push(config.fields.fontFamily);
+
+var view = {
+    render: function(vm, model) {
+        return el('div.' + style.id + 
+            (model.theme?('.'+style.modifiers[model.theme].name):''), 
+            [
+                el('div.inner', [
+                    el('span.text', (model.views && model.views.length > 0)?model.views:model.text)
+                ])
+            ]);
+    }
+};
+
+class Ctor extends UIBase {
+    constructor(...args) {
+        super(...args);
+        this.model = Object.assign({}, {
+            text: '',
+            theme: NAME_THEME_OCEAN
+        }, this.model);
+
+        this.init(view, style);
+    }
+}
+
+module.exports = Ctor;
+},{"../Base":8,"../config":13,"../utils/StyleSheet":20,"domvm":5}],10:[function(require,module,exports){
+'use strict';
+
+var domvm = require('domvm');
+var config = require('../config');
+var StyleSheet = require('../utils/StyleSheet');
+var UIBase = require('../Base');
+var el = domvm.defineElement;
 var PREFIX_CSS = 'context-ui-close';
 var NAME_THEME_OCEAN = 'ocean';
 
@@ -2087,7 +2171,7 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../Base":8,"../config":12,"../utils/StyleSheet":19,"domvm":5}],10:[function(require,module,exports){
+},{"../Base":8,"../config":13,"../utils/StyleSheet":20,"domvm":5}],11:[function(require,module,exports){
 'use strict';
 
 var domvm = require('domvm');
@@ -2130,7 +2214,7 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../Base":8,"../config":12,"../utils/StyleSheet":19,"domvm":5}],11:[function(require,module,exports){
+},{"../Base":8,"../config":13,"../utils/StyleSheet":20,"domvm":5}],12:[function(require,module,exports){
 'use strict';
 
 var domvm = require('domvm');
@@ -2171,6 +2255,7 @@ var style = new StyleSheet(`
         > .inner
         {
             margin: 4ex;
+            text-align: center;
         }
 
         > .close-container
@@ -2356,7 +2441,7 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../Base":8,"../Close":9,"../config":12,"../utils/StyleSheet":19,"domvm":5,"resize-sensor":6}],12:[function(require,module,exports){
+},{"../Base":8,"../Close":10,"../config":13,"../utils/StyleSheet":20,"domvm":5,"resize-sensor":6}],13:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -2373,7 +2458,7 @@ module.exports = {
 		}
 	}
 };
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 var UIBase = require('../../Base');
@@ -2398,7 +2483,7 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../../Base":8}],14:[function(require,module,exports){
+},{"../../Base":8}],15:[function(require,module,exports){
 'use strict';
 
 var domvm = require('domvm');
@@ -2436,7 +2521,7 @@ var style = new StyleSheet(`
             border-width: 1px;
             border-style: solid;
 
-            transition-property: border, background-color;;
+            transition-property: border, background-color;
             transition-duration: .3s;
             transition-timing-function: cubic-bezier(.52,.02,.19,1.02);
 
@@ -2546,7 +2631,7 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../../Close":9,"../../config":12,"../../utils/StyleSheet":19,"../Base":13,"domvm":5}],15:[function(require,module,exports){
+},{"../../Close":10,"../../config":13,"../../utils/StyleSheet":20,"../Base":14,"domvm":5}],16:[function(require,module,exports){
 'use strict';
 
 var domvm = require('domvm');
@@ -2750,7 +2835,7 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../../config":12,"../../utils/StyleSheet":19,"../Base":13,"dom-xinput":4,"domvm":5}],16:[function(require,module,exports){
+},{"../../config":13,"../../utils/StyleSheet":20,"../Base":14,"dom-xinput":4,"domvm":5}],17:[function(require,module,exports){
 'use strict';
 
 var config = require('../../config');
@@ -2825,7 +2910,7 @@ var style = new StyleSheet(`
     {
         > .select 
         {
-            color: {config.themes.ocean.prominent};
+            color: ${config.themes.ocean.prominent};
             transition-delay: 0s;
         }
     }
@@ -2955,7 +3040,7 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../../config":12,"../../utils/StyleSheet":19,"../Base":13,"../Text":15,"animejs":2,"domvm":5}],17:[function(require,module,exports){
+},{"../../config":13,"../../utils/StyleSheet":20,"../Base":14,"../Text":16,"animejs":2,"domvm":5}],18:[function(require,module,exports){
 'use strict';
 
 class Modifier {
@@ -2970,7 +3055,7 @@ class Modifier {
 }
 
 module.exports = Modifier;
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 var Modifier = require('./Modifier');
 var contextMap = new WeakMap();
@@ -2993,7 +3078,7 @@ function Modifiers(context) {
 }
 
 module.exports = Modifiers;
-},{"./Modifier":17}],19:[function(require,module,exports){
+},{"./Modifier":18}],20:[function(require,module,exports){
 'use strict';
 
 var md5 = require('blueimp-md5');
@@ -3039,7 +3124,7 @@ class StyleSheet {
 
 
 module.exports = StyleSheet;
-},{"./Modifiers":18,"./cssMounter":20,"./fontLoader":21,"blueimp-md5":3,"stylis":7}],20:[function(require,module,exports){
+},{"./Modifiers":19,"./cssMounter":21,"./fontLoader":22,"blueimp-md5":3,"stylis":7}],21:[function(require,module,exports){
 'use strict';
 exports.mount = function(cssText) {
     var style = document.createElement('style');
@@ -3053,7 +3138,7 @@ exports.mount = function(cssText) {
     var head = document.documentElement.querySelector('head');
     head.appendChild(style);
 };
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 var Stylis = require('stylis');
 var mounter = require('./cssMounter');
@@ -3070,6 +3155,6 @@ module.exports.load = function(familyName) {
     mounter.mount(cssText);
     loaded[familyName] = true;
 };
-},{"./cssMounter":20,"stylis":7}]},{},[1])(1)
+},{"./cssMounter":21,"stylis":7}]},{},[1])(1)
 });
 //# sourceMappingURL=demo.js.map

@@ -38,6 +38,7 @@ var style = new StyleSheet(`
         > .inner
         {
             margin: 4ex;
+            text-align: center;
         }
 
         > .close-container

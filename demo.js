@@ -4,6 +4,7 @@ const UILabel = require('./src/Label');
 const UIPathField = require('./src/fields/TextButton');
 const UITextField = require('./src/fields/Text');
 const UICheckBoxField = require('./src/fields/CheckBox');
+const UIButton = require('./src/Button');
 
 var prompt = new UIPrompt({
     fields: [
@@ -26,6 +27,9 @@ var prompt = new UIPrompt({
         new UICheckBoxField({
             name: 'target',
             label: 'Open in new window?'
+        }),
+        new UIButton({
+            text: 'Submit'
         })
     ]
 });
