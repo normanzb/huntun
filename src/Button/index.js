@@ -33,6 +33,7 @@ var style = new StyleSheet(`
     {
         margin: .5em auto;
         text-align: center;
+        font-size: 1.2em;
     }
 `, {
     prefix: PREFIX_CSS
