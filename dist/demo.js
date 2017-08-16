@@ -30,7 +30,12 @@ var prompt = new UIPrompt({
             label: 'Open in new window?'
         }),
         new UIButton({
-            text: 'Submit'
+            text: 'Submit',
+            events: {
+                onClick: function() {
+                    window.alert('submitted');
+                }
+            }
         })
     ]
 });
@@ -1957,6 +1962,9 @@ var view = {
     render: function(vm, model) {
         return el('div.' + style.id + 
             (model.theme?('.'+style.modifiers[model.theme].name):''), 
+            {
+                onclick: model.events.onClick
+            },
             [
                 el('div.inner', [
                     el('span.text', (model.views && model.views.length > 0)?model.views:model.text)
@@ -1968,12 +1976,22 @@ var view = {
 class Ctor extends UIBase {
     constructor(...args) {
         super(...args);
-        this.model = Object.assign({}, {
+        var me = this;
+        me.model = Object.assign({}, {
             text: '',
-            theme: NAME_THEME_OCEAN
-        }, this.model);
+            theme: NAME_THEME_OCEAN,
+            events: {
+                onClick: null
+            }
+        }, me.model);
 
-        this.init(view, style);
+        me.init(view, style);
+    }
+    set onClick(v) {
+        this.model.events.onClick = v;
+    }
+    get onClick() {
+        return this.model.events.onClick;
     }
 }
 

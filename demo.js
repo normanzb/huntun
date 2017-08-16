@@ -29,7 +29,12 @@ var prompt = new UIPrompt({
             label: 'Open in new window?'
         }),
         new UIButton({
-            text: 'Submit'
+            text: 'Submit',
+            events: {
+                onClick: function() {
+                    window.alert('submitted');
+                }
+            }
         })
     ]
 });
