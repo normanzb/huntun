@@ -3904,6 +3904,7 @@ var StyleSheet = require('../utils/StyleSheet');
 var ResizeSensor = require('resize-sensor');
 var UIBase = require('../Base');
 var UIClose = require('../Close');
+var UIFieldBase = require('../fields/Base');
 var el = domvm.defineElement;
 var vi = domvm.injectView;
 
@@ -4127,6 +4128,9 @@ class Ctor extends UIBase {
         var field;
         for(var l = this.model.fields.length; l--;) {
             field = this.model.fields[l];
+            if (!(field instanceof UIFieldBase)) {
+                continue;
+            }
             ret[field.name] = field.value;
         }
         return ret;
@@ -4134,7 +4138,7 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../Base":8,"../Close":10,"../config":13,"../utils/StyleSheet":20,"domvm/dist/nano/domvm.nano.js":5,"resize-sensor":6}],13:[function(require,module,exports){
+},{"../Base":8,"../Close":10,"../config":13,"../fields/Base":14,"../utils/StyleSheet":20,"domvm/dist/nano/domvm.nano.js":5,"resize-sensor":6}],13:[function(require,module,exports){
 'use strict';
 
 module.exports = {

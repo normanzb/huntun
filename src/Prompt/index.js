@@ -6,6 +6,7 @@ var StyleSheet = require('../utils/StyleSheet');
 var ResizeSensor = require('resize-sensor');
 var UIBase = require('../Base');
 var UIClose = require('../Close');
+var UIFieldBase = require('../fields/Base');
 var el = domvm.defineElement;
 var vi = domvm.injectView;
 
@@ -229,6 +230,9 @@ class Ctor extends UIBase {
         var field;
         for(var l = this.model.fields.length; l--;) {
             field = this.model.fields[l];
+            if (!(field instanceof UIFieldBase)) {
+                continue;
+            }
             ret[field.name] = field.value;
         }
         return ret;
