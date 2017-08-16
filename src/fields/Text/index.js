@@ -133,23 +133,24 @@ style.modifiers[NAME_THEME_OCEAN] = `
 style.fonts.google.push(config.fields.fontFamily);
 
 var view = {
-    render: function(vm, data) {
-        return el('div.' + style.id + '.' + style.modifiers[data.theme].name +
-            (data.prvt.inputted?'.'+style.modifiers[MODIFIER_HAS_INPUT].name:'') + 
-            (data.prvt.focused?'.'+style.modifiers[MODIFIER_HAS_FOCUS].name:''), [
+    render: function(vm, model) {
+        return el('div.' + style.id + '.' + style.modifiers[model.theme].name +
+            (model.prvt.inputted?'.'+style.modifiers[MODIFIER_HAS_INPUT].name:'') + 
+            (model.prvt.focused?'.'+style.modifiers[MODIFIER_HAS_FOCUS].name:''), [
                 el('div.inner', [
-                    el('div.placeholder', data.label),
+                    el('div.placeholder', model.label),
                     el('input.text', {
-                        value: data.text,
+                        name: model.name,
+                        value: model.text,
                         onfocus: function(){
-                            if (!data.prvt.focused) {
-                                data.prvt.focused = true;
+                            if (!model.prvt.focused) {
+                                model.prvt.focused = true;
                                 vm.redraw(true);
                             }
                         },
                         onblur: function() {
-                            if (data.prvt.focused) {
-                                data.prvt.focused = false;
+                            if (model.prvt.focused) {
+                                model.prvt.focused = false;
                                 vm.redraw(true);
                             }
                         },
@@ -159,15 +160,16 @@ var view = {
                                 vm._xinput.observe(node.el);
                                 vm._xinput.oninput = function() {
                                     var inputted;
-                                    data.text = node.el.value;
+                                    model.text = node.el.value;
+                                    model.prvt.raw = model.text;
                                     if (node.el.value === '') {
                                         inputted = false;
                                     }
                                     else {
                                         inputted = true;
                                     }
-                                    if (data.prvt.inputted !== inputted) {
-                                        data.prvt.inputted = inputted;
+                                    if (model.prvt.inputted !== inputted) {
+                                        model.prvt.inputted = inputted;
                                         vm.redraw(true);
                                     }
                                 };

@@ -105,6 +105,7 @@ var view = {
                 el('div.inner', [
                     el('div.ui-cross-container', [model.prvt.cross]),
                     el('input.check-box', {
+                        name: model.name,
                         type: 'checkbox',
                         checked: (model.active?true:false)
                     }),
@@ -124,10 +125,12 @@ class Ctor extends UIBase {
             active: false
         }, me.model, {
             prvt: {
+                raw: false,
                 cross: null,
                 onClick () {
                     me.cross.active = !me.cross.active;
                     me.model.active = me.cross.active;
+                    me.model.prvt.raw = me.cross.active;
                     me.viewModel.redraw(true);
                 }
             }

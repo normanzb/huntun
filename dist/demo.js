@@ -33,7 +33,7 @@ var prompt = new UIPrompt({
             text: 'Submit',
             events: {
                 onClick: function() {
-                    window.alert('submitted');
+                    window.alert(JSON.stringify(prompt.value));
                 }
             }
         })
@@ -3836,12 +3836,11 @@ class Ctor extends UIBase {
     set active (value) {
         if (value) {
             this.model.prvt.container.modifier = 'active';
-            this.viewModel.redraw(true);
         }
         else {
             this.model.prvt.container.modifier = '';
-            this.viewModel.redraw(true);
         }
+        this.viewModel.redraw(true);
     }
     get onClick() {
         return this.model.events.onClick;
@@ -4123,6 +4122,15 @@ class Ctor extends UIBase {
         }, 500);
         me.viewModel.redraw(true);
     }
+    get value() {
+        var ret = {};
+        var field;
+        for(var l = this.model.fields.length; l--;) {
+            field = this.model.fields[l];
+            ret[field.name] = field.value;
+        }
+        return ret;
+    }
 }
 
 module.exports = Ctor;
@@ -4151,19 +4159,15 @@ var UIBase = require('../../Base');
 class Ctor extends UIBase {
     constructor(...args) {
         super(...args);
-        var me = this;
-
-        me._name = null;
-        
-        if (args[0] && args[0].name) {
-            me.name = args[0].name;
-        }
     }
     get name() {
-        return this._name;
+        return this.model.name;
     }
     set name(value) {
-        this._name = value;
+        this.model.name = value;
+    }
+    get value() {
+        return this.model.prvt.raw;
     }
 }
 
@@ -4276,6 +4280,7 @@ var view = {
                 el('div.inner', [
                     el('div.ui-cross-container', [model.prvt.cross]),
                     el('input.check-box', {
+                        name: model.name,
                         type: 'checkbox',
                         checked: (model.active?true:false)
                     }),
@@ -4295,10 +4300,12 @@ class Ctor extends UIBase {
             active: false
         }, me.model, {
             prvt: {
+                raw: false,
                 cross: null,
                 onClick () {
                     me.cross.active = !me.cross.active;
                     me.model.active = me.cross.active;
+                    me.model.prvt.raw = me.cross.active;
                     me.viewModel.redraw(true);
                 }
             }
@@ -4452,23 +4459,24 @@ style.modifiers[NAME_THEME_OCEAN] = `
 style.fonts.google.push(config.fields.fontFamily);
 
 var view = {
-    render: function(vm, data) {
-        return el('div.' + style.id + '.' + style.modifiers[data.theme].name +
-            (data.prvt.inputted?'.'+style.modifiers[MODIFIER_HAS_INPUT].name:'') + 
-            (data.prvt.focused?'.'+style.modifiers[MODIFIER_HAS_FOCUS].name:''), [
+    render: function(vm, model) {
+        return el('div.' + style.id + '.' + style.modifiers[model.theme].name +
+            (model.prvt.inputted?'.'+style.modifiers[MODIFIER_HAS_INPUT].name:'') + 
+            (model.prvt.focused?'.'+style.modifiers[MODIFIER_HAS_FOCUS].name:''), [
                 el('div.inner', [
-                    el('div.placeholder', data.label),
+                    el('div.placeholder', model.label),
                     el('input.text', {
-                        value: data.text,
+                        name: model.name,
+                        value: model.text,
                         onfocus: function(){
-                            if (!data.prvt.focused) {
-                                data.prvt.focused = true;
+                            if (!model.prvt.focused) {
+                                model.prvt.focused = true;
                                 vm.redraw(true);
                             }
                         },
                         onblur: function() {
-                            if (data.prvt.focused) {
-                                data.prvt.focused = false;
+                            if (model.prvt.focused) {
+                                model.prvt.focused = false;
                                 vm.redraw(true);
                             }
                         },
@@ -4478,15 +4486,16 @@ var view = {
                                 vm._xinput.observe(node.el);
                                 vm._xinput.oninput = function() {
                                     var inputted;
-                                    data.text = node.el.value;
+                                    model.text = node.el.value;
+                                    model.prvt.raw = model.text;
                                     if (node.el.value === '') {
                                         inputted = false;
                                     }
                                     else {
                                         inputted = true;
                                     }
-                                    if (data.prvt.inputted !== inputted) {
-                                        data.prvt.inputted = inputted;
+                                    if (model.prvt.inputted !== inputted) {
+                                        model.prvt.inputted = inputted;
                                         vm.redraw(true);
                                     }
                                 };
@@ -4703,18 +4712,20 @@ var view = {
 class Ctor extends UIBase {
     constructor(...args) {
         super(...args);
-        this.model = Object.assign({}, {
+        var me = this;
+        me._textField = new UITextField(...args);
+        me.model = Object.assign({}, {
             events: {
                 onClick:null
             }
-        }, this.model, {
+        }, me.model, {
             prvt: {
-                textField: iv(new UITextField(...args).viewModel),
+                textField: iv(me._textField.viewModel),
                 mouseentered: false
             }
         });
 
-        this.init(view, style);
+        me.init(view, style);
     }
     get onClick() {
         return this.modal.events.onClick;
@@ -4722,6 +4733,12 @@ class Ctor extends UIBase {
     set onClick(v) {
         this.modal.events.onClick = v;
         this.viewModel.redraw(true);
+    }
+    get name() {
+        return this._textField.name;
+    }
+    get value() {
+        return this._textField.value;
     }
 }
 

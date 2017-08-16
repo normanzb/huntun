@@ -224,6 +224,15 @@ class Ctor extends UIBase {
         }, 500);
         me.viewModel.redraw(true);
     }
+    get value() {
+        var ret = {};
+        var field;
+        for(var l = this.model.fields.length; l--;) {
+            field = this.model.fields[l];
+            ret[field.name] = field.value;
+        }
+        return ret;
+    }
 }
 
 module.exports = Ctor;

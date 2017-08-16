@@ -175,12 +175,11 @@ class Ctor extends UIBase {
     set active (value) {
         if (value) {
             this.model.prvt.container.modifier = 'active';
-            this.viewModel.redraw(true);
         }
         else {
             this.model.prvt.container.modifier = '';
-            this.viewModel.redraw(true);
         }
+        this.viewModel.redraw(true);
     }
     get onClick() {
         return this.model.events.onClick;

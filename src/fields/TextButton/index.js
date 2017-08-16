@@ -180,18 +180,20 @@ var view = {
 class Ctor extends UIBase {
     constructor(...args) {
         super(...args);
-        this.model = Object.assign({}, {
+        var me = this;
+        me._textField = new UITextField(...args);
+        me.model = Object.assign({}, {
             events: {
                 onClick:null
             }
-        }, this.model, {
+        }, me.model, {
             prvt: {
-                textField: iv(new UITextField(...args).viewModel),
+                textField: iv(me._textField.viewModel),
                 mouseentered: false
             }
         });
 
-        this.init(view, style);
+        me.init(view, style);
     }
     get onClick() {
         return this.modal.events.onClick;
@@ -199,6 +201,12 @@ class Ctor extends UIBase {
     set onClick(v) {
         this.modal.events.onClick = v;
         this.viewModel.redraw(true);
+    }
+    get name() {
+        return this._textField.name;
+    }
+    get value() {
+        return this._textField.value;
     }
 }
 

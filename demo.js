@@ -32,7 +32,7 @@ var prompt = new UIPrompt({
             text: 'Submit',
             events: {
                 onClick: function() {
-                    window.alert('submitted');
+                    window.alert(JSON.stringify(prompt.value));
                 }
             }
         })
