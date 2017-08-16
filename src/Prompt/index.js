@@ -99,10 +99,11 @@ style.modifiers[MODIFIER_HIDDEN] = `
 `;
 
 function updatePosition(element, data, vm) {
-    var backUp = element.style.display;
-    element.style.display = 'block';
+    var rootElement = element.parentNode;
+    var backUp = rootElement.style.display;
+    rootElement.style.display = 'block';
     var offset = getCenterisedOffset(element);
-    element.style.display = backUp;
+    rootElement.style.display = backUp;
     if (data.style.left != offset.left || data.style.top != offset.top) {
         data.style.left = offset.left;
         data.style.top = offset.top;
