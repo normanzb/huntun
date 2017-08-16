@@ -3998,7 +3998,10 @@ style.modifiers[MODIFIER_HIDDEN] = `
 `;
 
 function updatePosition(element, data, vm) {
+    var backUp = element.style.display;
+    element.style.display = 'block';
     var offset = getCenterisedOffset(element);
+    element.style.display = backUp;
     if (data.style.left != offset.left || data.style.top != offset.top) {
         data.style.left = offset.left;
         data.style.top = offset.top;
@@ -4060,10 +4063,7 @@ function getMaximumZIndex(base) {
 }
 
 function getCenterisedOffset(element) {
-    var backUp = element.style.display;
-    element.style.display = 'block';
     let box = element.getBoundingClientRect();
-    element.style.display = backUp;
     var ret = {
         top: 0,
         left: 0
