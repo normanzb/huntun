@@ -3641,7 +3641,7 @@ class Ctor extends UIBase {
             text: '',
             theme: NAME_THEME_OCEAN,
             events: {
-                onClick: null
+                onClick: ()=> void 0
             }
         }, me.model);
 
