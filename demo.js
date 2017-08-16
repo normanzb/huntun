@@ -40,3 +40,4 @@ var prompt = new UIPrompt({
 });
 
 prompt.mount(document.body);
+prompt.show();

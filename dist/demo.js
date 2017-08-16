@@ -41,6 +41,7 @@ var prompt = new UIPrompt({
 });
 
 prompt.mount(document.body);
+prompt.show();
 },{"./src/Button":9,"./src/Label":11,"./src/Prompt":12,"./src/fields/CheckBox":15,"./src/fields/Text":16,"./src/fields/TextButton":17}],2:[function(require,module,exports){
 /*
  2017 Julian Garnier
@@ -3649,6 +3650,7 @@ class Ctor extends UIBase {
     }
     set onClick(v) {
         this.model.events.onClick = v;
+        this.viewModel.redraw(true);
     }
     get onClick() {
         return this.model.events.onClick;
@@ -3846,6 +3848,7 @@ class Ctor extends UIBase {
     }
     set onClick(func) {
         this.model.events.onClick = func;
+        this.viewModel.redraw(true);
     }
 }
 
@@ -4097,7 +4100,6 @@ class Ctor extends UIBase {
         this.model.style.zIndex = getMaximumZIndex(this.model.style.zIndex) + 1;
 
         this.init(view, style);
-        this.show();
     }
     show() {
         var me = this;
@@ -4715,6 +4717,7 @@ class Ctor extends UIBase {
     }
     set onClick(v) {
         this.modal.events.onClick = v;
+        this.viewModel.redraw(true);
     }
 }
 

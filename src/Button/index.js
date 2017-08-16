@@ -84,6 +84,7 @@ class Ctor extends UIBase {
     }
     set onClick(v) {
         this.model.events.onClick = v;
+        this.viewModel.redraw(true);
     }
     get onClick() {
         return this.model.events.onClick;

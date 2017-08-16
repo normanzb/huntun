@@ -201,7 +201,6 @@ class Ctor extends UIBase {
         this.model.style.zIndex = getMaximumZIndex(this.model.style.zIndex) + 1;
 
         this.init(view, style);
-        this.show();
     }
     show() {
         var me = this;
