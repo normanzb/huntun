@@ -1,6 +1,6 @@
 'use strict';
 
-var domvm = require('domvm');
+var domvm = require('domvm/dist/nano/domvm.nano.js');
 var config = require('../config');
 var StyleSheet = require('../utils/StyleSheet');
 var UIBase = require('../Base');

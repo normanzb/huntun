@@ -355,43 +355,1703 @@ b.duration=0;b.add=function(a){b.children.forEach(function(a){a.began=!0;a.compl
 },{}],4:[function(require,module,exports){
 !function(a,b){"function"==typeof define&&define.amd?define([],function(){return a.returnExportsGlobal=b()}):"object"==typeof exports?module.exports=b():a.XInput=b()}(this,function(){var a=Function("return this")(),b=function(a){var b=a.Function.prototype,c=a.Array.prototype;return b.bind||function(a){var b=c.slice,d=this,e=b.call(arguments);return e.shift(),function f(){return this instanceof f&&(a=this),d.apply(a,e.concat(b.call(arguments)))}}}(a),c=function(a){function b(a){var b=this;null!=window.event&&j in window.event&&null!=window.event[j]&&""!==window.event[j]&&"value"!==window.event[j]||b._el.value!=b._old&&(b._old=b._el.value,b.oninput(a))}function c(){document.attachEvent("onselectionchange",this._onchange)}function d(){document.detachEvent("onselectionchange",this._onchange)}function e(){this.oninput()}function f(){this._old="",this._el=null,this._onchange=a.call(b,this),this._onfocus=a.call(c,this),this._onblur=a.call(d,this),this._oninput=a.call(e,this),this.oninput=function(){}}var g="input",h="textarea",i="change",j="propertyName",k=function(){function a(a){if(a.setAttribute("oninput","return"),"function"==typeof a.oninput)return!0;try{var b=document.createEvent("KeyboardEvent"),c=!1,d=function(a){c=!0,a.preventDefault(),a.stopPropagation()};return b.initKeyEvent("keypress",!0,!0,window,!1,!1,!1,!1,0,"e".charCodeAt(0)),document.body.appendChild(a),a.addEventListener(g,d,!1),a.focus(),a.dispatchEvent(b),a.removeEventListener(g,d,!1),document.body.removeChild(a),c}catch(e){}}var b=document.createElement(g);return"oninput"in b||a(b)}(),l=f.prototype;return l.trigger=function(){return this._onchange()},l.sync=function(){this._old=this._el.value},l.observe=function(a){if(null==a||a.tagName.toLowerCase()!=g&&a.tagName.toLowerCase()!=h)throw"Target input element must be specified.";var b=this;if(b._el=a,a.attachEvent)b._old=a.value,a.attachEvent("onpropertychange",b._onchange),a.attachEvent("onfocus",b._onfocus),a.attachEvent("onblur",b._onblur),a.attachEvent("onkeypress",b._onchange),a.attachEvent("onkeyup",b._onchange);else{if(!k)throw"Something wrong, should never goes to here.";a.addEventListener(g,b._onchange,!1),a.addEventListener(i,b._onchange,!1)}},l.neglect=function(){var a=this,b=a._el;b.attachEvent?(b.detachEvent("onpropertychange",a._onchange),b.detachEvent("onfocus",a._onfocus),b.detachEvent("onblur",a._onblur),b.detachEvent("onkeypress",a._onchange),b.detachEvent("onkeyup",a._onchange)):(b.removeEventListener(g,a._onchange),b.removeEventListener(i,a._onchange))},l.dispose=function(){var a=this;a.neglect(),a._el=null},f}(b);return c});
 },{}],5:[function(require,module,exports){
-/*
- https://github.com/leeoniya/domvm (v3.0.5, full)
+/**
+* Copyright (c) 2017, Leon Sorokin
+* All rights reserved. (MIT Licensed)
+*
+* domvm.full.js - DOM ViewModel
+* A thin, fast, dependency-free vdom view layer
+* @preserve https://github.com/leeoniya/domvm (v3.0.5, nano)
 */
-(function(z,q){"object"===typeof exports&&"undefined"!==typeof module?module.exports=q():"function"===typeof define&&define.amd?define(q):z.domvm=q()})(this,function(){"use strict";function z(){}function q(a){return null!=a&&a.constructor===Object}function ca(a){a=typeof a;return"string"===a||"number"===a}function P(a){return"function"===typeof a}function D(a){for(var b=arguments,c=1;c<b.length;c++)for(var d in b[c])a[d]=b[c][d];return a}function da(a,b){for(var c=[];b<a.length;b++)c.push(a[b]);return c}function ea(a,
-b){for(var c in a)if(a[c]!==b[c])return!1;return!0}function Q(a,b){var c=a.length;if(b.length!==c)return!1;for(var d=0;d<c;d++)if(a[d]!==b[d])return!1;return!0}function fa(a){function b(){c=0;a.apply(d,e)}if(!ha)return a;var c,d,e;return function(){d=this;e=arguments;c||(c=ha(b))}}function Ga(a,b,c){return function(){return a.apply(c,b)}}function v(){}function ia(a){var b=new v;b.type=2;b.body=a;return b}function H(a){return"o"===a[0]&&"n"===a[1]}function I(a,b){switch(b){case "value":case "checked":case "selected":return!0}return!1}
-function w(a){for(a=a||A;null==a.vm&&a.parent;)a=a.parent;return a.vm}function R(a,b){var c=S(a,function(a){c&&(null!=b.node&&b.redraw(),J(c))});return ja(a)}function ka(a,b){var c=S(a,function(a){c&&null!=b.node&&b.redraw()});return c}function la(a,b,c,d){var e=new v;e.type=1;null!=d&&(e.flags=d);e.attrs=b;b=ma[a];if(null==b){var f,g,h;for(ma[a]=b={tag:(f=a.match(/^[-\w]+/))?f[0]:"div",id:(g=a.match(/#([-\w]+)/))?g[1]:null,class:(h=a.match(/\.([-\w.]+)/))?h[1].replace(/\./g," "):null,attrs:null};f=
-Ha.exec(a);)null==b.attrs&&(b.attrs={}),b.attrs[f[1]]=f[2]||""}a=b;e.tag=a.tag;if(a.id||a.class||a.attrs){f=e.attrs||{};a.id&&null==f.id&&(f.id=a.id);a.class&&(e._class=a.class,f.class=a.class+(null!=f.class?" "+f.class:""));if(a.attrs)for(var k in a.attrs)null==f[k]&&(f[k]=a.attrs[k]);e.attrs=f}k=e.attrs;null!=k&&(null!=k._key&&(e.key=k._key),null!=k._ref&&(e.ref=k._ref),null!=k._hooks&&(e.hooks=k._hooks),null!=k._raw&&(e.raw=k._raw),null!=k._data&&(e.data=k._data),null!=k._flags&&(e.flags=k._flags),
-null==e.key&&(null!=e.ref?e.key=e.ref:null!=k.id?e.key=k.id:null!=k.name&&(e.key=k.name+("radio"===k.type||"checkbox"===k.type?k.value:""))));null!=c&&(e.body=c);return e}function C(a,b,c,d){if(5!==a.type&&4!==a.type){a.parent=b;a.idx=c;a.vm=d;if(null!=a.ref){c=w(a);b=["refs"].concat(a.ref.split("."));for(var e;e=b.shift();)c[e]=0===b.length?a:c=c[e]||{}}b=a.hooks;d=d&&d.hooks;if(b&&(b.willRemove||b.didRemove)||d&&(d.willUnmount||d.didUnmount))for(d=a;d=d.parent;)d.flags|=1;if(l(a.body))for(d=a.body,
-b=0;b<d.length;b++)c=d[b],!1===c||null==c?d.splice(b--,1):l(c)?(e=b--,d.splice.apply(d,[e,1].concat(c))):(null==c.type&&(d[b]=c=ia(""+c)),2===c.type?null==c.body||""===c.body?d.splice(b--,1):0<b&&2===d[b-1].type?(d[b-1].body+=c.body,d.splice(b--,1)):C(c,a,b,null):C(c,a,b,null));else x(a.body)&&(a.body=R(a.body,w(a)))}}function na(a,b){return isNaN(b)||Ia[a]?b:b+"px"}function p(a,b,c,d){var e=b.hooks[a];if(e)if("d"===a[0]&&"i"===a[1]&&"d"===a[2])d?(a=b.parent,a&&a.el&&a.el.offsetHeight):T.push([e,
-b,c]);else return e(b,c)}function K(a){if(T.length)for(a=a.node,a&&a.el&&a.el.offsetHeight;a=T.shift();)a[0](a[1],a[2])}function oa(a){var b=a.hooks,c=a.vm;c=c&&c.hooks&&p("willUnmount",c,c.data);b=b&&p("willRemove",a);if(1===(a.flags&1)&&l(a.body))for(var d=0;d<a.body.length;d++)oa(a.body[d]);return c||b}function U(a,b,c){var d=b._node,e=d.hooks,f=d.vm;if(1===(d.flags&1)&&l(d.body))for(var g=0;g<d.body.length;g++)U(b,d.body[g].el);a.removeChild(b);e&&p("didRemove",d,null,c);f&&f.hooks&&p("didUnmount",
-f,f.data,c)}function E(a,b){var c=b._node;if(!c._dead){var d=oa(c);null!=d&&"object"===typeof d&&P(d.then)?(c._dead=!0,d.then(Ga(U,[a,b,!0]))):U(a,b)}}function L(a){var b=a.el;if(0===(a.flags&1))b.textContent=null;else{var c=b.firstChild;do a=c.nextSibling,E(b,c);while(c=a)}}function m(a,b,c){var d=b._node,e=d.hooks,f=null!=b.parentNode,g=(b===c||!f)&&d.vm;g&&g.hooks&&p("willMount",g,g.data);e&&p(f?"willReinsert":"willInsert",d);a.insertBefore(b,c);e&&p(f?"didReinsert":"didInsert",d);g&&g.hooks&&
-p("didMount",g,g.data)}function pa(a,b,c){var d;for(d=a.target;null==d._node;)d=d.parentNode;d=d._node;var e=w(d);b=b.apply(null,c.concat([a,d,e,e.data]));e.onevent(a,d,e,e.data,c);V.call(null,a,d,e,e.data,c);!1===b&&(a.preventDefault(),a.stopPropagation())}function qa(a,b){return function(c){pa(c,a,b)}}function Ja(a){return function(b){for(var c in a)if(b.target.matches(c)){var d=a[c],e=l(d),f=e?d[0]:d;d=e?d.slice(1):[];pa(b,f,d)}}}function ra(a,b,c,d){c!==d&&(a=a.el,c._raw?a[b]=c:l(c)?null!=d&&
-Q(c,d)||(c=qa(c[0],c.slice(1)),a[b]=c):(c=P(c)?qa(c,[]):Ja(c),a[b]=c))}function sa(a,b,c,d){var e,f;null==c?q(b)?e=b:f=b:(e=b,f=c);return la(a,e,f,d)}function ta(a,b,c){c?a.el[b]="":"xlink:href"===b?a.el.removeAttributeNS("http://www.w3.org/1999/xlink","href"):a.el.removeAttribute(b)}function ua(a,b,c,d,e){var f=a.el;null==c?!e&&ta(a,b,!1):null!=a.ns?"xlink:href"===b?f.setAttributeNS("http://www.w3.org/1999/xlink","href",c):f.setAttribute(b,c):"class"===b?f.className=c:"id"===b||"boolean"===typeof c||
-d?f[b]=c:"."===b[0]?f[b.substr(1)]=c:f.setAttribute(b,c)}function W(a,b,c){var d=a.attrs||A,e=b.attrs||A;if(d!==e){for(var f in d){var g=d[f],h=I(a.tag,f),k=h?a.el[f]:e[f];x(g)&&(d[f]=g=R(g,w(a)));if(g!==k)if("style"===f){h=g=void 0;k=a;var l=(k.attrs||A).style,p=b?(b.attrs||A).style:null;if(null==l||ca(l))k.el.style.cssText=l;else{for(h in l){var m=l[h];x(m)&&(m=R(m,w(k)));if(null==p||null!=m&&m!==p[h])k.el.style[h]=na(h,m)}if(p)for(g in p)null==l[g]&&(k.el.style[g]="")}}else"_"!==f[0]&&(H(f)?ra(a,
-f,g,k):ua(a,f,g,h,c))}for(f in e)f in d||"_"===f[0]||ta(a,f,I(a.tag,f)||H(f))}}function F(a,b,c,d){4===a.type&&(b=a.data,c=a.key,d=a.opts,a=a.view);return new M(a,b,c,d)}function va(a){for(var b,c=0;c<a.body.length;c++){b=a.body[c];var d=b.type;3>=d?m(a.el,y(b)):4===d?(b=F(b.view,b.data,b.key,b.opts)._redraw(a,c,!1),m(a.el,y(b.node))):5===d&&(b=b.vm,b._redraw(a,c),m(a.el,b.node.el))}}function y(a,b){if(null==a.el)if(1===a.type){if(!b){b=a.tag;var c=a.ns;b=null!=c?N.createElementNS(c,b):N.createElement(b)}a.el=
-b;null!=a.attrs&&W(a,A,!0);8===(a.flags&8)&&a.body.body(a);l(a.body)?va(a):null!=a.body&&""!==a.body&&(a.raw?a.el.innerHTML=a.body:a.el.textContent=a.body)}else 2===a.type?a.el=b||N.createTextNode(a.body):3===a.type&&(a.el=b||N.createComment(a.body));a.el._node=a;return a.el}function wa(a,b,c,d){c=c.previousSibling;d=d.nextSibling;a(c,d);return{lftSib:c?c.nextSibling:b.firstChild,rgtSib:d?d.previousSibling:b.lastChild}}function Ka(a,b,c,d,e){var f=e.idx===c.idx+1,g=f?!1:b._node===e,h=f?!0:d._node===
-c;return g||h?wa(function(c,e){h&&m(a,d,b);g&&m(a,b,e)},a,b,d):null}function La(a,b,c,d){return wa(function(c,f){for(var e=b;e!==f;e=e.nextSibling){b=c=e;for(var h=e.nextSibling;h!==f;h=h.nextSibling)0<d(c,h)&&(c=h);c!==e&&(m(a,c,b),e=c)}},a,b,c)}function Ma(a,b){return a._node.idx-b._node.idx}function xa(a,b){var c=a.el,d=a.body,e=b.body;b=d[0];var f=d[d.length-1],g=(e[0]||A).el;e=(e[e.length-1]||A).el;var h;a:for(;;){for(;;){if(g){if(null==(h=g._node)){g=g.nextSibling;continue}if(h.parent!==a){var k=
-g.nextSibling;null!=h.vm?h.vm.unmount(!0):E(c,g);g=k;continue}}if(null==b)break a;else if(null==b.el)m(c,y(b),g),b=d[b.idx+1];else if(b.el===g)b=d[b.idx+1],g=g.nextSibling;else break}for(;;){if(e){if(null==(h=e._node)){e=e.previousSibling;continue}if(h.parent!==a){k=e.previousSibling;null!=h.vm?h.vm.unmount(!0):E(c,e);e=k;continue}}if(f===b)break a;else if(null==f.el)k=y(f),m(c,k,e?e.nextSibling:null),f=d[f.idx-1];else if(f.el===e)f=d[f.idx-1],e=e.previousSibling;else break}(k=Ka(c,g,b,e,f))||(k=
-La(c,g,e,Ma));g=k.lftSib;e=k.rgtSib}}function ya(a){return a.el._node.parent!==a.parent}function Na(a,b,c){return b[c]}function Oa(a,b,c){for(;c<b.length;c++){var d=b[c];if(null!=d.vm){if(4===a.type&&d.vm.view===a.view&&d.vm.key===a.key||5===a.type&&d.vm===a.vm)return d}else if(!ya(d)&&a.tag===d.tag&&a.type===d.type&&a.key===d.key&&(a.flags&-2)===(d.flags&-2))return d}return null}function Pa(a,b,c){for(;c<b.length;c++){var d=b[c];if(d.key===a.key)return d}return null}function O(a,b){b.hooks&&p("willRecycle",
-b,a);var c=a.el=b.el,d=b.body,e=a.body;c._node=a;if(2===a.type&&e!==d)c.nodeValue=e;else{null==a.attrs&&null==b.attrs||W(a,b,!1);var f=l(d),g=l(e),h=8===(a.flags&8);if(f)if(g||h){c=a.body;d=c.length;e=b.body;f=e.length;g=8===(a.flags&8);var k=2===(a.flags&2);h=4===(a.flags&4);var m=!k&&1===a.type,t=!0;k=h?Pa:k||g?Na:Oa;if(m&&0===d)L(b),g&&(a.body=[]);else{var A=0,x=!1,B=0;if(g){var y={key:null};var z=Array(d)}for(var u=0;u<d;u++){if(g){var q=!1,v=null;if(t){h&&(y.key=c.key(u));var r=k(y,e,B)}if(null!=
-r){var w=r.idx;v=c.diff(u,r);if(!0===v){var n=r;n.parent=a;n.idx=u}else q=!0}else q=!0;q&&(n=c.tpl(u),C(n,a,u),n._diff=null!=v?v:c.diff(u),null!=r&&O(n,r));z[u]=n}else if(n=c[u],q=n.type,3>=q){if(r=t&&k(n,e,B))O(n,r),w=r.idx}else 4===q?(r=t&&k(n,e,B))?(r.vm._update(n.data,a,u),w=r.idx):F(n.view,n.data,n.key,n.opts)._redraw(a,u,!1):5===q&&n.vm._update(n.data,a,u);if(null!=r&&(w===B?(B++,B===f&&d>f&&(r=null,t=!1)):x=!0,100<f&&x&&0===++A%10))for(;B<f&&ya(e[B]);)B++}g&&(a.body=z);m&&xa(a,b)}}else e!==
-d&&(null!=e?a.raw?c.innerHTML=e:c.textContent=e:L(b));else g?(L(b),va(a)):e!==d&&(a.raw?c.innerHTML=e:b.raw?c.textContent=e:c.firstChild?c.firstChild.nodeValue=e:c.textContent=e);b.hooks&&p("didRecycle",b,a)}}function M(a,b,c,d){var e=this;e.view=a;e.data=b;e.key=c;x(b)&&(e._stream=ka(b,e));d&&(e.opts=d,e.config(d));a=q(a)?a:a.call(e,e,b,c,d);P(a)?e.render=a:(e.render=a.render,e.config(a));e._redrawAsync=fa(function(a){return e._redraw()});e._updateAsync=fa(function(a){return e._update(a)});e.init&&
-e.init.call(e,e,e.data,e.key,d)}function za(a,b,c,d){null!=c&&(c.body[d]=b,b.idx=d,b.parent=c);return a}function X(a,b,c,d){this.view=a;this.data=b;this.key=c;this.opts=d}function Y(a){this.vm=a}function Aa(a,b){a=a.body;if(l(a))for(var c=0;c<a.length;c++){var d=a[c];null!=d.vm?b.push(d.vm):Aa(d,b)}return b}function Ba(a){var b=arguments,c=b.length;if(1<c){var d=1;if(q(b[1])){var e=b[1];d=2}d=c===d+1&&(ca(b[d])||l(b[d])||e&&8===(e._flags&8))?b[d]:da(b,d)}return la(a,e,d)}function Ca(a,b){a.el=b;b._node=
-a;var c=a.attrs;for(f in c){var d=c[f],e=I(a.tag,f);"style"!==f&&"_"!==f[0]&&(H(f)?ra(a,f,d):null!=d&&e&&ua(a,f,d,e))}8===(a.flags&8)&&a.body.body(a);if(l(a.body)){b=b.firstChild;c=0;var f=a.body[c];do 4===f.type?f=F(f.view,f.data,f.key,f.opts)._redraw(a,c,!1).node:5===f.type&&(f=f.node||f._redraw(a,c,!1).node),Ca(f,b);while((b=b.nextSibling)&&(f=a.body[++c]))}}function G(a){a=null==a?"":""+a;for(var b=0,c="";b<a.length;b++)switch(a[b]){case "&":c+="&amp;";break;case "<":c+="&lt;";break;case ">":c+=
-"&gt;";break;default:c+=a[b]}return c}function Da(a){a=null==a?"":""+a;for(var b=0,c="";b<a.length;b++)c+='"'===a[b]?"&quot;":a[b];return c}function Ea(a,b){for(var c="",d=0;d<a.length;d++)c+=Z(a[d],b);return c}function Z(a,b){switch(a.type){case 4:var c=F(a.view,a.data,a.key,a.opts).html(b);break;case 5:c=a.vm.html();break;case 1:if(null!=a.el&&null==a.tag){c=a.el.outerHTML;break}c="<"+a.tag;if(null!=a.attrs){for(var d in a.attrs)if(!(H(d)||"."===d[0]||"_"===d[0]||!1===b&&I(a.tag,d))){var e=a.attrs[d];
-if("style"===d&&null!=e)if("object"===typeof e){var f=void 0;var g="";for(f in e)null!=e[f]&&(g+=f.replace(/([a-z])([A-Z])/g,"$1-$2").toLowerCase()+": "+na(f,e[f])+"; ");f=g}else f=e;else!0===e?c+=" "+G(d)+'=""':!1!==e&&null!=e&&(c+=" "+G(d)+'="'+Da(e)+'"')}null!=f&&(c+=' style="'+Da(f.trim())+'"')}if(null==a.body&&null!=a.ns&&"svg"!==a.tag)return c+"/>";c+=">";Qa[a.tag]||(l(a.body)?c+=Ea(a.body,b):8===(a.flags&8)?(a.body.body(a),c+=Ea(a.body,b)):c+=a.raw?a.body:G(a.body),c+="</"+a.tag+">");break;
-case 2:c=G(a.body);break;case 3:c="\x3c!--"+G(a.body)+"--\x3e"}return c}var t="undefined"!==typeof window,ha=(t?window:{}).requestAnimationFrame,A={},l=Array.isArray,Fa=v.prototype={constructor:v,type:null,vm:null,key:null,ref:null,data:null,hooks:null,raw:!1,ns:null,el:null,tag:null,attrs:null,body:null,flags:0,_class:null,_diff:null,_dead:!1,idx:null,parent:null},x=function(){return!1},ja=z,S=z,J=z,ma={},Ha=/\[(\w+)(?:=(\w+))?\]/g,Ia={animationIterationCount:!0,boxFlex:!0,boxFlexGroup:!0,boxOrdinalGroup:!0,
-columnCount:!0,flex:!0,flexGrow:!0,flexPositive:!0,flexShrink:!0,flexNegative:!0,flexOrder:!0,gridRow:!0,gridColumn:!0,order:!0,lineClamp:!0,borderImageOutset:!0,borderImageSlice:!0,borderImageWidth:!0,fontWeight:!0,lineHeight:!0,opacity:!0,orphans:!0,tabSize:!0,widows:!0,zIndex:!0,zoom:!0,fillOpacity:!0,floodOpacity:!0,stopOpacity:!0,strokeDasharray:!0,strokeDashoffset:!0,strokeMiterlimit:!0,strokeOpacity:!0,strokeWidth:!0},T=[],N=t?document:null,aa={},V=z;t=M.prototype={constructor:M,_diff:null,
-init:null,view:null,key:null,data:null,state:null,api:null,opts:null,node:null,hooks:null,onevent:z,refs:null,render:null,mount:function(a,b){b?(L({el:a,flags:0}),this._redraw(null,null,!1),a.nodeName.toLowerCase()!==this.node.tag?(y(this.node),m(a.parentNode,this.node.el,a),a.parentNode.removeChild(a)):m(a.parentNode,y(this.node,a),a)):(this._redraw(null,null),a&&m(a,this.node.el));a&&K(this);return this},unmount:function(a){x(this._stream)&&J(this._stream);var b=this.node;E(b.el.parentNode,b.el);
-a||K(this)},config:function(a){a.init&&(this.init=a.init);a.diff&&(this.diff=a.diff);a.onevent&&(this.onevent=a.onevent);a.hooks&&(this.hooks=D(this.hooks||{},a.hooks));a.onemit&&(this.onemit=D(this.onemit||{},a.onemit))},parent:function(){return w(this.node.parent)},root:function(){for(var a=this.node;a.parent;)a=a.parent;return a.vm},redraw:function(a){a?this._redraw():this._redrawAsync();return this},update:function(a,b){b?this._update(a):this._updateAsync(a);return this},_update:function(a,b,
-c,d){null!=a&&this.data!==a&&(this.hooks&&p("willUpdate",this,a),this.data=a,x(this._stream)&&J(this._stream),x(a)&&(this._stream=ka(a,this)));return this._redraw(b,c,d)},_redraw:function(a,b,c){var d=null==a,e=this.node&&this.node.el&&this.node.el.parentNode,f=this.node,g;if(null!=this.diff){var h=this._diff;this._diff=g=this.diff(this,this.data);if(null!=f){var k=l(h)?Q:ea;if(h===g||k(h,g))return za(this,f,a,b)}}e&&this.hooks&&p("willRedraw",this,this.data);h=this.render.call(this,this,this.data,
-h,g);if(h===f)return za(this,f,a,b);this.refs=null;null!=this.key&&h.key!==this.key&&(h.key=this.key);this.node=h;a?(C(h,a,b,this),a.body[b]=h):f&&f.parent?(C(h,f.parent,f.idx,this),f.parent.body[f.idx]=h):C(h,null,null,this);!1!==c&&(f?f.tag!==h.tag||f.key!==h.key?(f.vm=h.vm=null,a=f.el.parentNode,b=f.el.nextSibling,E(a,f.el),m(a,y(h),b),f.el=h.el,h.vm=this):O(h,f):y(h));e&&this.hooks&&p("didRedraw",this,this.data);d&&e&&K(this);return this},_redrawAsync:null,_updateAsync:null};X.prototype={constructor:X,
-type:4,view:null,data:null,key:null,opts:null};Y.prototype={constructor:Y,type:5,vm:null};var ba={config:function(a){V=a.onevent||V;a.onemit&&D(aa,a.onemit);a.stream&&(a=a.stream,x=a.is,ja=a.val,S=a.sub,J=a.unsub)},ViewModel:M,VNode:v,createView:F,defineElement:sa,defineSvgElement:function(a,b,c,d){a=sa(a,b,c,d);a.ns="http://www.w3.org/2000/svg";return a},defineText:ia,defineComment:function(a){var b=new v;b.type=3;b.body=a;return b},defineView:function(a,b,c,d){return new X(a,
-b,c,d)},injectView:function(a){return new Y(a)},injectElement:function(a){var b=new v;b.type=1;b.el=b.key=a;return b},lazyList:function(a,b){var c=a.length,d={items:a,length:c,key:function(c){return b.key(a[c],c)},diff:function(c,d){c=b.diff(a[c],c);if(null==d)return c;d=d._diff;return(c===d||l(d)?Q(c,d):ea(c,d))||c},tpl:function(c){return b.tpl(a[c],c)},map:function(a){b.tpl=a;return d},body:function(a){for(var b=Array(c),e=0;e<c;e++){var h=d.tpl(e);h._diff=d.diff(e);b[e]=h;C(h,a,e)}a.body=b}};return d},
-FIXED_BODY:2,DEEP_REMOVE:1,KEYED_LIST:4,LAZY_LIST:8};Fa.patch=function(a){a:{if(null!=a.type){if(null!=this.vm){var b=void 0;break a}C(a,this.parent,this.idx,null);this.parent.body[this.idx]=a;O(a,this);K(w(a))}else{b=Object.create(this);b.attrs=D({},this.attrs);a=D(this.attrs,a);if(null!=this._class){var c=a.class;a.class=null!=c&&""!==c?this._class+" "+c:this._class}W(this,b)}b=void 0}return b};t.emit=function(a){var b=this,c=b;c=da(arguments,1).concat(c,c.data);do{var d=b.onemit;if(d=d?d[a]:null){d.apply(b,
-c);break}}while(b=b.parent());aa[a]&&aa[a].apply(b,c)};t.onemit=null;t.body=function(){return Aa(this.node,[])};ba.defineElementSpread=Ba;ba.defineSvgElementSpread=function(){var a=Ba.apply(null,arguments);a.ns="http://www.w3.org/2000/svg";return a};t._stream=null;var Qa={area:!0,base:!0,br:!0,col:!0,command:!0,embed:!0,hr:!0,img:!0,input:!0,keygen:!0,link:!0,meta:!0,param:!0,source:!0,track:!0,wbr:!0};t.attach=function(a){null==this.node&&this._redraw(null,null,!1);Ca(this.node,a);return this};t.html=
-function(a){null==this.node&&this._redraw(null,null,!1);return Z(this.node,a)};Fa.html=function(a){return Z(this,a)};return ba});
+
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define(factory) :
+	(global.domvm = factory());
+}(this, (function () { 'use strict';
+
+// NOTE: if adding a new *VNode* type, make it < COMMENT and renumber rest.
+// There are some places that test <= COMMENT to assert if node is a VNode
+
+// VNode types
+var ELEMENT	= 1;
+var TEXT		= 2;
+var COMMENT	= 3;
+
+// placeholder types
+var VVIEW		= 4;
+var VMODEL		= 5;
+
+var ENV_DOM = typeof window !== "undefined";
+var win = ENV_DOM ? window : {};
+var rAF = win.requestAnimationFrame;
+
+var emptyObj = {};
+
+function noop() {}
+
+var isArr = Array.isArray;
+
+function isSet(val) {
+	return val != null;
+}
+
+function isPlainObj(val) {
+	return val != null && val.constructor === Object;		//  && typeof val === "object"
+}
+
+function insertArr(targ, arr, pos, rem) {
+	targ.splice.apply(targ, [pos, rem].concat(arr));
+}
+
+function isVal(val) {
+	var t = typeof val;
+	return t === "string" || t === "number";
+}
+
+function isFunc(val) {
+	return typeof val === "function";
+}
+
+function isProm(val) {
+	return typeof val === "object" && isFunc(val.then);
+}
+
+
+
+function assignObj(targ) {
+	var args = arguments;
+
+	for (var i = 1; i < args.length; i++)
+		{ for (var k in args[i])
+			{ targ[k] = args[i][k]; } }
+
+	return targ;
+}
+
+// export const defProp = Object.defineProperty;
+
+function deepSet(targ, path, val) {
+	var seg;
+
+	while (seg = path.shift()) {
+		if (path.length === 0)
+			{ targ[seg] = val; }
+		else
+			{ targ[seg] = targ = targ[seg] || {}; }
+	}
+}
+
+/*
+export function deepUnset(targ, path) {
+	var seg;
+
+	while (seg = path.shift()) {
+		if (path.length === 0)
+			targ[seg] = val;
+		else
+			targ[seg] = targ = targ[seg] || {};
+	}
+}
+*/
+
+
+
+function cmpObj(a, b) {
+	for (var i in a)
+		{ if (a[i] !== b[i])
+			{ return false; } }
+
+	return true;
+}
+
+function cmpArr(a, b) {
+	var alen = a.length;
+
+	if (b.length !== alen)
+		{ return false; }
+
+	for (var i = 0; i < alen; i++)
+		{ if (a[i] !== b[i])
+			{ return false; } }
+
+	return true;
+}
+
+// https://github.com/darsain/raft
+// rAF throttler, aggregates multiple repeated redraw calls within single animframe
+function raft(fn) {
+	if (!rAF)
+		{ return fn; }
+
+	var id, ctx, args;
+
+	function call() {
+		id = 0;
+		fn.apply(ctx, args);
+	}
+
+	return function() {
+		ctx = this;
+		args = arguments;
+		if (!id) { id = rAF(call); }
+	};
+}
+
+function curry(fn, args, ctx) {
+	return function() {
+		return fn.apply(ctx, args);
+	};
+}
+
+/*
+export function prop(val, cb, ctx, args) {
+	return function(newVal, execCb) {
+		if (newVal !== undefined && newVal !== val) {
+			val = newVal;
+			execCb !== false && isFunc(cb) && cb.apply(ctx, args);
+		}
+
+		return val;
+	};
+}
+*/
+
+// adapted from https://github.com/Olical/binary-search
+
+function VNode() {}
+
+var VNodeProto = VNode.prototype = {
+	constructor: VNode,
+
+	type:	null,
+
+	vm:		null,
+
+	// all this stuff can just live in attrs (as defined) just have getters here for it
+	key:	null,
+	ref:	null,
+	data:	null,
+	hooks:	null,
+	raw:	false,
+	ns:		null,
+
+	el:		null,
+
+	tag:	null,
+	attrs:	null,
+	body:	null,
+
+	flags:	0,
+
+	_class:	null,
+	_diff:	null,
+
+	// pending removal on promise resolution
+	_dead:	false,
+
+	idx:	null,
+	parent:	null,
+
+	/*
+	// break out into optional fluent module
+	key:	function(val) { this.key	= val; return this; },
+	ref:	function(val) { this.ref	= val; return this; },		// deep refs
+	data:	function(val) { this.data	= val; return this; },
+	hooks:	function(val) { this.hooks	= val; return this; },		// h("div").hooks()
+	html:	function(val) { this.html	= true; return this.body(val); },
+
+	body:	function(val) { this.body	= val; return this; },
+	*/
+};
+
+function defineText(body) {
+	var node = new VNode;
+	node.type = TEXT;
+	node.body = body;
+	return node;
+}
+
+function isEvProp(name) {
+	return name[0] === "o" && name[1] === "n";
+}
+
+function isSplProp(name) {
+	return name[0] === "_";
+}
+
+function isStyleProp(name) {
+	return name === "style";
+}
+
+function repaint(node) {
+	node && node.el && node.el.offsetHeight;
+}
+
+// tests interactive props where real val should be compared
+function isDynProp(tag, attr) {
+//	switch (tag) {
+//		case "input":
+//		case "textarea":
+//		case "select":
+//		case "option":
+			switch (attr) {
+				case "value":
+				case "checked":
+				case "selected":
+//				case "selectedIndex":
+					return true;
+			}
+//	}
+
+	return false;
+}
+
+function getVm(n) {
+	n = n || emptyObj;
+	while (n.vm == null && n.parent)
+		{ n = n.parent; }
+	return n.vm;
+}
+
+// creates a one-shot self-ending stream that redraws target vm
+// TODO: if it's already registered by any parent vm, then ignore to avoid simultaneous parent & child refresh
+
+var tagCache = {};
+
+var RE_ATTRS = /\[(\w+)(?:=(\w+))?\]/g;
+
+function cssTag(raw) {
+	{
+		var cached = tagCache[raw];
+
+		if (cached == null) {
+			var tag, id, cls, attr;
+
+			tagCache[raw] = cached = {
+				tag:	(tag	= raw.match( /^[-\w]+/))		?	tag[0]						: "div",
+				id:		(id		= raw.match( /#([-\w]+)/))		? 	id[1]						: null,
+				class:	(cls	= raw.match(/\.([-\w.]+)/))		?	cls[1].replace(/\./g, " ")	: null,
+				attrs:	null,
+			};
+
+			while (attr = RE_ATTRS.exec(raw)) {
+				if (cached.attrs == null)
+					{ cached.attrs = {}; }
+				cached.attrs[attr[1]] = attr[2] || "";
+			}
+		}
+
+		return cached;
+	}
+}
+
+// (de)optimization flags
+
+// forces slow bottom-up removeChild to fire deep willRemove/willUnmount hooks,
+var DEEP_REMOVE = 1;
+// prevents inserting/removing/reordering of children
+var FIXED_BODY = 2;
+// enables fast keyed lookup of children via binary search, expects homogeneous keyed body
+var KEYED_LIST = 4;
+// indicates an vnode match/diff/recycler function for body
+var LAZY_LIST = 8;
+
+function initElementNode(tag, attrs, body, flags) {
+	var node = new VNode;
+
+	node.type = ELEMENT;
+
+	if (isSet(flags))
+		{ node.flags = flags; }
+
+	node.attrs = attrs;
+
+	var parsed = cssTag(tag);
+
+	node.tag = parsed.tag;
+
+	// meh, weak assertion, will fail for id=0, etc.
+	if (parsed.id || parsed.class || parsed.attrs) {
+		var p = node.attrs || {};
+
+		if (parsed.id && !isSet(p.id))
+			{ p.id = parsed.id; }
+
+		if (parsed.class) {
+			node._class = parsed.class;		// static class
+			p.class = parsed.class + (isSet(p.class) ? (" " + p.class) : "");
+		}
+		if (parsed.attrs) {
+			for (var key in parsed.attrs)
+				{ if (!isSet(p[key]))
+					{ p[key] = parsed.attrs[key]; } }
+		}
+
+//		if (node.attrs !== p)
+			node.attrs = p;
+	}
+
+	var mergedAttrs = node.attrs;
+
+	if (isSet(mergedAttrs)) {
+		if (isSet(mergedAttrs._key))
+			{ node.key = mergedAttrs._key; }
+
+		if (isSet(mergedAttrs._ref))
+			{ node.ref = mergedAttrs._ref; }
+
+		if (isSet(mergedAttrs._hooks))
+			{ node.hooks = mergedAttrs._hooks; }
+
+		if (isSet(mergedAttrs._raw))
+			{ node.raw = mergedAttrs._raw; }
+
+		if (isSet(mergedAttrs._data))
+			{ node.data = mergedAttrs._data; }
+
+		if (isSet(mergedAttrs._flags))
+			{ node.flags = mergedAttrs._flags; }
+
+		if (!isSet(node.key)) {
+			if (isSet(node.ref))
+				{ node.key = node.ref; }
+			else if (isSet(mergedAttrs.id))
+				{ node.key = mergedAttrs.id; }
+			else if (isSet(mergedAttrs.name))
+				{ node.key = mergedAttrs.name + (mergedAttrs.type === "radio" || mergedAttrs.type === "checkbox" ? mergedAttrs.value : ""); }
+		}
+	}
+
+	if (body != null)
+		{ node.body = body; }
+
+	return node;
+}
+
+function setRef(vm, name, node) {
+	var path = ["refs"].concat(name.split("."));
+	deepSet(vm, path, node);
+}
+
+function setDeepRemove(node) {
+	while (node = node.parent)
+		{ node.flags |= DEEP_REMOVE; }
+}
+
+// vnew, vold
+function preProc(vnew, parent, idx, ownVm) {
+	if (vnew.type === VMODEL || vnew.type === VVIEW)
+		{ return; }
+
+	vnew.parent = parent;
+	vnew.idx = idx;
+	vnew.vm = ownVm;
+
+	if (vnew.ref != null)
+		{ setRef(getVm(vnew), vnew.ref, vnew); }
+
+	var nh = vnew.hooks,
+		vh = ownVm && ownVm.hooks;
+
+	if (nh && (nh.willRemove || nh.didRemove) ||
+		vh && (vh.willUnmount || vh.didUnmount))
+		{ setDeepRemove(vnew); }
+
+	if (isArr(vnew.body))
+		{ preProcBody(vnew); }
+	else {}
+}
+
+function preProcBody(vnew) {
+	var body = vnew.body;
+
+	for (var i = 0; i < body.length; i++) {
+		var node2 = body[i];
+
+		// remove false/null/undefined
+		if (node2 === false || node2 == null)
+			{ body.splice(i--, 1); }
+		// flatten arrays
+		else if (isArr(node2)) {
+			insertArr(body, node2, i--, 1);
+		}
+		else {
+			if (node2.type == null)
+				{ body[i] = node2 = defineText(""+node2); }
+
+			if (node2.type === TEXT) {
+				// remove empty text nodes
+				if (node2.body == null || node2.body === "")
+					{ body.splice(i--, 1); }
+				// merge with previous text node
+				else if (i > 0 && body[i-1].type === TEXT) {
+					body[i-1].body += node2.body;
+					body.splice(i--, 1);
+				}
+				else
+					{ preProc(node2, vnew, i, null); }
+			}
+			else
+				{ preProc(node2, vnew, i, null); }
+		}
+	}
+}
+
+function autoPx(name, val) {
+	{ return val; }
+}
+
+// assumes if styles exist both are objects or both are strings
+function patchStyle(n, o) {
+	var ns =     (n.attrs || emptyObj).style;
+	var os = o ? (o.attrs || emptyObj).style : null;
+
+	// replace or remove in full
+	if (ns == null || isVal(ns))
+		{ n.el.style.cssText = ns; }
+	else {
+		for (var nn in ns) {
+			var nv = ns[nn];
+
+			if (os == null || nv != null && nv !== os[nn])
+				{ n.el.style[nn] = autoPx(nn, nv); }
+		}
+
+		// clean old
+		if (os) {
+			for (var on in os) {
+				if (ns[on] == null)
+					{ n.el.style[on] = ""; }
+			}
+		}
+	}
+}
+
+var didQueue = [];
+
+function fireHook(name, o, n, immediate) {
+	var fn = o.hooks[name];
+
+	if (fn) {
+		if (name[0] === "d" && name[1] === "i" && name[2] === "d") {	// did*
+			//	console.log(name + " should queue till repaint", o, n);
+			immediate ? repaint(o.parent) && fn(o, n) : didQueue.push([fn, o, n]);
+		}
+		else {		// will*
+			//	console.log(name + " may delay by promise", o, n);
+			return fn(o, n);		// or pass  done() resolver
+		}
+	}
+}
+
+function drainDidHooks(vm) {
+	if (didQueue.length) {
+		repaint(vm.node);
+
+		var item;
+		while (item = didQueue.shift())
+			{ item[0](item[1], item[2]); }
+	}
+}
+
+var doc = ENV_DOM ? document : null;
+
+function closestVNode(el) {
+	while (el._node == null)
+		{ el = el.parentNode; }
+	return el._node;
+}
+
+function createElement(tag, ns) {
+	if (ns != null)
+		{ return doc.createElementNS(ns, tag); }
+	return doc.createElement(tag);
+}
+
+function createTextNode(body) {
+	return doc.createTextNode(body);
+}
+
+function createComment(body) {
+	return doc.createComment(body);
+}
+
+// ? removes if !recycled
+function nextSib(sib) {
+	return sib.nextSibling;
+}
+
+// ? removes if !recycled
+function prevSib(sib) {
+	return sib.previousSibling;
+}
+
+// TODO: this should collect all deep proms from all hooks and return Promise.all()
+function deepNotifyRemove(node) {
+	var hooks = node.hooks, vm = node.vm;
+
+	var wuRes = vm && vm.hooks && fireHook("willUnmount", vm, vm.data);
+
+	var wrRes = hooks && fireHook("willRemove", node);
+
+	if ((node.flags & DEEP_REMOVE) === DEEP_REMOVE && isArr(node.body)) {
+		for (var i = 0; i < node.body.length; i++)
+			{ deepNotifyRemove(node.body[i]); }
+	}
+
+	return wuRes || wrRes;
+}
+
+function _removeChild(parEl, el, immediate) {
+	var node = el._node, hooks = node.hooks, vm = node.vm;
+
+	if ((node.flags & DEEP_REMOVE) === DEEP_REMOVE && isArr(node.body)) {
+	//	var parEl = node.el;
+		for (var i = 0; i < node.body.length; i++)
+			{ _removeChild(el, node.body[i].el); }
+	}
+
+	parEl.removeChild(el);
+
+	hooks && fireHook("didRemove", node, null, immediate);
+
+	vm && vm.hooks && fireHook("didUnmount", vm, vm.data, immediate);
+}
+
+// todo: should delay parent unmount() by returning res prom?
+function removeChild(parEl, el) {
+	var node = el._node, hooks = node.hooks;
+
+	// already marked for removal
+	if (node._dead) { return; }
+
+	var res = deepNotifyRemove(node);
+
+	if (res != null && isProm(res)) {
+		node._dead = true;
+		res.then(curry(_removeChild, [parEl, el, true]));
+	}
+	else
+		{ _removeChild(parEl, el); }
+}
+
+function clearChildren(parent) {
+	var parEl = parent.el;
+
+	if ((parent.flags & DEEP_REMOVE) === 0)
+		{ parEl.textContent = null; }
+	else {
+		var el = parEl.firstChild;
+
+		do {
+			var next = nextSib(el);
+			removeChild(parEl, el);
+		} while (el = next);
+	}
+}
+
+// todo: hooks
+function insertBefore(parEl, el, refEl) {
+	var node = el._node, hooks = node.hooks, inDom = el.parentNode != null;
+
+	// el === refEl is asserted as a no-op insert called to fire hooks
+	var vm = (el === refEl || !inDom) && node.vm;
+
+	vm && vm.hooks && fireHook("willMount", vm, vm.data);
+
+	hooks && fireHook(inDom ? "willReinsert" : "willInsert", node);
+	parEl.insertBefore(el, refEl);
+	hooks && fireHook(inDom ? "didReinsert" : "didInsert", node);
+
+	vm && vm.hooks && fireHook("didMount", vm, vm.data);
+}
+
+function insertAfter(parEl, el, refEl) {
+	insertBefore(parEl, el, refEl ? nextSib(refEl) : null);
+}
+
+var onevent = noop;
+
+function config(newCfg) {
+	onevent = newCfg.onevent || onevent;
+
+	
+}
+
+function bindEv(el, type, fn) {
+//	DEBUG && console.log("addEventListener");
+	el[type] = fn;
+}
+
+function handle(e, fn, args) {
+	var node = closestVNode(e.target);
+	var vm = getVm(node);
+	var out = fn.apply(null, args.concat([e, node, vm, vm.data]));
+
+	// should these respect out === false?
+	vm.onevent(e, node, vm, vm.data, args);
+	onevent.call(null, e, node, vm, vm.data, args);
+
+	if (out === false) {
+		e.preventDefault();
+		e.stopPropagation();
+	}
+}
+
+function wrapHandler(fn, args) {
+//	console.log("wrapHandler");
+
+	return function wrap(e) {
+		handle(e, fn, args);
+	};
+}
+
+// delagated handlers {".moo": [fn, a, b]}, {".moo": fn}
+function wrapHandlers(hash) {
+//	console.log("wrapHandlers");
+
+	return function wrap(e) {
+		for (var sel in hash) {
+			if (e.target.matches(sel)) {
+				var hnd = hash[sel];
+				var isarr = isArr(hnd);
+				var fn = isarr ? hnd[0] : hnd;
+				var args = isarr ? hnd.slice(1) : [];
+
+				handle(e, fn, args);
+			}
+		}
+	}
+}
+
+// could merge with on*
+
+function patchEvent(node, name, nval, oval) {
+	if (nval === oval)
+		{ return; }
+
+	var el = node.el;
+
+	if (nval._raw) {
+		bindEv(el, name, nval);
+		return;
+	}
+
+	if (isArr(nval)) {
+		var diff = oval == null || !cmpArr(nval, oval);
+		diff && bindEv(el, name, wrapHandler(nval[0], nval.slice(1)));
+	}
+	// basic onclick: myFn (or extracted)
+	else if (isFunc(nval)) {
+		bindEv(el, name, wrapHandler(nval, []));
+	}
+	// delegated onclick: {".sel": myFn} & onclick: {".sel": [myFn, 1, 2, 3]}
+	else		// isPlainObj, TODO:, diff with old/clean
+		{ bindEv(el, name, wrapHandlers(nval)); }
+}
+
+function defineElement(tag, arg1, arg2, flags) {
+	var attrs, body;
+
+	if (arg2 == null) {
+		if (isPlainObj(arg1))
+			{ attrs = arg1; }
+		else
+			{ body = arg1; }
+	}
+	else {
+		attrs = arg1;
+		body = arg2;
+	}
+
+	return initElementNode(tag, attrs, body, flags);
+}
+
+//export const XML_NS = "http://www.w3.org/2000/xmlns/";
+var SVG_NS = "http://www.w3.org/2000/svg";
+var XLINK_NS = "http://www.w3.org/1999/xlink";
+
+function defineSvgElement(tag, arg1, arg2, flags) {
+	var n = defineElement(tag, arg1, arg2, flags);
+	n.ns = SVG_NS;
+	return n;
+}
+
+var XLINKHREF = "xlink:href";
+
+function remAttr(node, name, asProp) {
+	if (asProp)
+		{ node.el[name] = ""; }
+	else {
+		if (name === XLINKHREF)
+			{ node.el.removeAttributeNS(XLINK_NS, "href"); }
+		else
+			{ node.el.removeAttribute(name); }
+	}
+}
+
+// setAttr
+// diff, ".", "on*", bool vals, skip _*, value/checked/selected selectedIndex
+function setAttr(node, name, val, asProp, initial) {
+	var el = node.el;
+
+	if (val == null)
+		{ !initial && remAttr(node, name, false); }		//, asProp?  // will also removeAttr of style: null
+	else if (node.ns != null) {
+		if (name === XLINKHREF)
+			{ el.setAttributeNS(XLINK_NS, "href", val); }
+		else
+			{ el.setAttribute(name, val); }
+	}
+	else if (name === "class")
+		{ el.className = val; }
+	else if (name === "id" || typeof val === "boolean" || asProp)
+		{ el[name] = val; }
+	else if (name[0] === ".")
+		{ el[name.substr(1)] = val; }
+	else
+		{ el.setAttribute(name, val); }
+}
+
+function patchAttrs(vnode, donor, initial) {
+	var nattrs = vnode.attrs || emptyObj;
+	var oattrs = donor.attrs || emptyObj;
+
+	if (nattrs === oattrs) {
+		
+	}
+	else {
+		for (var key in nattrs) {
+			var nval = nattrs[key];
+			var isDyn = isDynProp(vnode.tag, key);
+			var oval = isDyn ? vnode.el[key] : oattrs[key];
+
+			if (nval === oval) {}
+			else if (isStyleProp(key))
+				{ patchStyle(vnode, donor); }
+			else if (isSplProp(key)) {}
+			else if (isEvProp(key))
+				{ patchEvent(vnode, key, nval, oval); }
+			else
+				{ setAttr(vnode, key, nval, isDyn, initial); }
+		}
+
+		// TODO: handle key[0] === "."
+		// should bench style.cssText = "" vs removeAttribute("style")
+		for (var key in oattrs) {
+			!(key in nattrs) &&
+			!isSplProp(key) &&
+			remAttr(vnode, key, isDynProp(vnode.tag, key) || isEvProp(key));
+		}
+	}
+}
+
+function createView(view, data, key, opts) {
+	if (view.type === VVIEW) {
+		data	= view.data;
+		key		= view.key;
+		opts	= view.opts;
+		view	= view.view;
+	}
+
+	return new ViewModel(view, data, key, opts);
+}
+
+//import { XML_NS, XLINK_NS } from './defineSvgElement';
+function hydrateBody(vnode) {
+	for (var i = 0; i < vnode.body.length; i++) {
+		var vnode2 = vnode.body[i];
+		var type2 = vnode2.type;
+
+		// ELEMENT,TEXT,COMMENT
+		if (type2 <= COMMENT)
+			{ insertBefore(vnode.el, hydrate(vnode2)); }		// vnode.el.appendChild(hydrate(vnode2))
+		else if (type2 === VVIEW) {
+			var vm = createView(vnode2.view, vnode2.data, vnode2.key, vnode2.opts)._redraw(vnode, i, false);		// todo: handle new data updates
+			type2 = vm.node.type;
+			insertBefore(vnode.el, hydrate(vm.node));
+		}
+		else if (type2 === VMODEL) {
+			var vm = vnode2.vm;
+			vm._redraw(vnode, i);					// , false
+			type2 = vm.node.type;
+			insertBefore(vnode.el, vm.node.el);		// , hydrate(vm.node)
+		}
+	}
+}
+
+//  TODO: DRY this out. reusing normal patch here negatively affects V8's JIT
+function hydrate(vnode, withEl) {
+	if (vnode.el == null) {
+		if (vnode.type === ELEMENT) {
+			vnode.el = withEl || createElement(vnode.tag, vnode.ns);
+
+		//	if (vnode.tag === "svg")
+		//		vnode.el.setAttributeNS(XML_NS, 'xmlns:xlink', XLINK_NS);
+
+			if (vnode.attrs != null)
+				{ patchAttrs(vnode, emptyObj, true); }
+
+			if ((vnode.flags & LAZY_LIST) === LAZY_LIST)	// vnode.body instanceof LazyList
+				{ vnode.body.body(vnode); }
+
+			if (isArr(vnode.body))
+				{ hydrateBody(vnode); }
+			else if (vnode.body != null && vnode.body !== "") {
+				if (vnode.raw)
+					{ vnode.el.innerHTML = vnode.body; }
+				else
+					{ vnode.el.textContent = vnode.body; }
+			}
+		}
+		else if (vnode.type === TEXT)
+			{ vnode.el = withEl || createTextNode(vnode.body); }
+		else if (vnode.type === COMMENT)
+			{ vnode.el = withEl || createComment(vnode.body); }
+	}
+
+	vnode.el._node = vnode;
+
+	return vnode.el;
+}
+
+function nextNode(node, body) {
+	return body[node.idx + 1];
+}
+
+function prevNode(node, body) {
+	return body[node.idx - 1];
+}
+
+function parentNode(node) {
+	return node.parent;
+}
+
+function tmpEdges(fn, parEl, lftSib, rgtSib) {
+	// get outer immute edges
+	var lftLft = prevSib(lftSib);
+	var rgtRgt = nextSib(rgtSib);
+
+	fn(lftLft, rgtRgt);
+
+	return {
+		lftSib: lftLft ? nextSib(lftLft) : parEl.firstChild,
+		rgtSib: rgtRgt ? prevSib(rgtRgt) : parEl.lastChild,
+	};
+}
+
+function headTailTry(parEl, lftSib, lftNode, rgtSib, rgtNode) {
+	var areAdjacent	= rgtNode.idx === lftNode.idx + 1;
+	var headToTail = areAdjacent ? false : lftSib._node === rgtNode;
+	var tailToHead = areAdjacent ? true  : rgtSib._node === lftNode;
+
+	if (headToTail || tailToHead) {
+		return tmpEdges(function(lftLft, rgtRgt) {
+			if (tailToHead)
+				{ insertBefore(parEl, rgtSib, lftSib); }
+
+			if (headToTail)
+				{ insertBefore(parEl, lftSib, rgtRgt); }
+		}, parEl, lftSib, rgtSib);
+	}
+
+	return null;
+}
+
+// init vm,
+
+// selection sort of DOM (cause move cost >> cmp cost)
+// todo: skip removed
+function sortDOM(parEl, lftSib, rgtSib, cmpFn) {
+//	DEBUG && console.log("selection sort!");
+
+	return tmpEdges(function(lftLft, rgtRgt) {
+		var min;
+
+		for (var i = lftSib; i !== rgtRgt; i = nextSib(i)) {
+			lftSib = min = i;
+
+			for (var j = nextSib(i); j !== rgtRgt; j = nextSib(j)) {
+				if (cmpFn(min, j) > 0)
+					{ min = j; }
+			}
+
+			if (min === i)
+				{ continue; }
+
+			insertBefore(parEl, min, lftSib);
+
+			i = min;
+		}
+	}, parEl, lftSib, rgtSib);
+}
+
+function cmpElNodeIdx(a, b) {
+	return a._node.idx - b._node.idx;
+}
+
+function syncChildren(node, donor) {
+	var parEl		= node.el,
+		body		= node.body,
+		obody		= donor.body,
+		lftNode		= body[0],
+		rgtNode		= body[body.length - 1],
+		lftSib		= ((obody)[0] || emptyObj).el,
+	//	lftEnd		= prevSib(lftSib),
+		rgtSib		= (obody[obody.length - 1] || emptyObj).el,
+	//	rgtEnd		= nextSib(rgtSib),
+		newSibs,
+		tmpSib,
+		lsNode,
+		rsNode;
+
+	converge:
+	while (1) {
+//		from_left:
+		while (1) {
+			// remove any non-recycled sibs whose el.node has the old parent
+			if (lftSib) {
+				// skip dom elements not created by domvm
+				if ((lsNode = lftSib._node) == null) {
+					lftSib = nextSib(lftSib);
+					continue;
+				}
+
+				if (parentNode(lsNode) !== node) {
+					tmpSib = nextSib(lftSib);
+					lsNode.vm != null ? lsNode.vm.unmount(true) : removeChild(parEl, lftSib);
+					lftSib = tmpSib;
+					continue;
+				}
+			}
+
+			if (lftNode == null)		// reached end
+				{ break converge; }
+			else if (lftNode.el == null) {
+				insertBefore(parEl, hydrate(lftNode), lftSib);		// lftNode.vm != null ? lftNode.vm.mount(parEl, false, true, lftSib) :
+				lftNode = nextNode(lftNode, body);
+			}
+			else if (lftNode.el === lftSib) {
+				lftNode = nextNode(lftNode, body);
+				lftSib = nextSib(lftSib);
+			}
+			else
+				{ break; }
+		}
+
+//		from_right:
+		while (1) {
+		//	if (rgtSib === lftEnd)
+		//		break converge;
+
+			if (rgtSib) {
+				if ((rsNode = rgtSib._node) == null) {
+					rgtSib = prevSib(rgtSib);
+					continue;
+				}
+
+				if (parentNode(rsNode) !== node) {
+					tmpSib = prevSib(rgtSib);
+					rsNode.vm != null ? rsNode.vm.unmount(true) : removeChild(parEl, rgtSib);
+					rgtSib = tmpSib;
+					continue;
+				}
+			}
+
+			if (rgtNode === lftNode)		// converged
+				{ break converge; }
+			else if (rgtNode.el == null) {
+				insertAfter(parEl, hydrate(rgtNode), rgtSib);		// rgtNode.vm != null ? rgtNode.vm.mount(parEl, false, true, nextSib(rgtSib) :
+				rgtNode = prevNode(rgtNode, body);
+			}
+			else if (rgtNode.el === rgtSib) {
+				rgtNode = prevNode(rgtNode, body);
+				rgtSib = prevSib(rgtSib);
+			}
+			else
+				{ break; }
+		}
+
+		if (newSibs = headTailTry(parEl, lftSib, lftNode, rgtSib, rgtNode)) {
+			lftSib = newSibs.lftSib;
+			rgtSib = newSibs.rgtSib;
+			continue;
+		}
+
+		newSibs = sortDOM(parEl, lftSib, rgtSib, cmpElNodeIdx);
+		lftSib = newSibs.lftSib;
+		rgtSib = newSibs.rgtSib;
+	}
+}
+
+function alreadyAdopted(vnode) {
+	return vnode.el._node.parent !== vnode.parent;
+}
+
+function takeSeqIndex(n, obody, fromIdx) {
+	return obody[fromIdx];
+}
+
+function findSeqThorough(n, obody, fromIdx) {		// pre-tested isView?
+	for (; fromIdx < obody.length; fromIdx++) {
+		var o = obody[fromIdx];
+
+		if (o.vm != null) {
+			// match by key & viewFn || vm
+			if (n.type === VVIEW && o.vm.view === n.view && o.vm.key === n.key || n.type === VMODEL && o.vm === n.vm)
+				{ return o; }
+		}
+		else if (!alreadyAdopted(o) && n.tag === o.tag && n.type === o.type && n.key === o.key && (n.flags & ~DEEP_REMOVE) === (o.flags & ~DEEP_REMOVE))
+			{ return o; }
+	}
+
+	return null;
+}
+
+function findSeqKeyed(n, obody, fromIdx) {
+	for (; fromIdx < obody.length; fromIdx++) {
+		var o = obody[fromIdx];
+
+		if (o.key === n.key)
+			{ return o; }
+	}
+
+	return null;
+}
+
+// have it handle initial hydrate? !donor?
+// types (and tags if ELEM) are assumed the same, and donor exists
+function patch(vnode, donor) {
+	donor.hooks && fireHook("willRecycle", donor, vnode);
+
+	var el = vnode.el = donor.el;
+
+	var obody = donor.body;
+	var nbody = vnode.body;
+
+	el._node = vnode;
+
+	// "" => ""
+	if (vnode.type === TEXT && nbody !== obody) {
+		el.nodeValue = nbody;
+		return;
+	}
+
+	if (vnode.attrs != null || donor.attrs != null)
+		{ patchAttrs(vnode, donor, false); }
+
+	// patch events
+
+	var oldIsArr = isArr(obody);
+	var newIsArr = isArr(nbody);
+	var lazyList = (vnode.flags & LAZY_LIST) === LAZY_LIST;
+
+//	var nonEqNewBody = nbody != null && nbody !== obody;
+
+	if (oldIsArr) {
+		// [] => []
+		if (newIsArr || lazyList)
+			{ patchChildren(vnode, donor); }
+		// [] => "" | null
+		else if (nbody !== obody) {
+			if (nbody != null) {
+				if (vnode.raw)
+					{ el.innerHTML = nbody; }
+				else
+					{ el.textContent = nbody; }
+			}
+			else
+				{ clearChildren(donor); }
+		}
+	}
+	else {
+		// "" | null => []
+		if (newIsArr) {
+			clearChildren(donor);
+			hydrateBody(vnode);
+		}
+		// "" | null => "" | null
+		else if (nbody !== obody) {
+			if (vnode.raw)
+				{ el.innerHTML = nbody; }
+			else if (donor.raw)
+				{ el.textContent = nbody; }
+			else if (el.firstChild)
+				{ el.firstChild.nodeValue = nbody; }
+			else
+				{ el.textContent = nbody; }
+		}
+	}
+
+	donor.hooks && fireHook("didRecycle", donor, vnode);
+}
+
+// larger qtys of KEYED_LIST children will use binary search
+//const SEQ_FAILS_MAX = 100;
+
+// TODO: modify vtree matcher to work similar to dom reconciler for keyed from left -> from right -> head/tail -> binary
+// fall back to binary if after failing nri - nli > SEQ_FAILS_MAX
+// while-advance non-keyed fromIdx
+// [] => []
+function patchChildren(vnode, donor) {
+	var nbody		= vnode.body,
+		nlen		= nbody.length,
+		obody		= donor.body,
+		olen		= obody.length,
+		isLazy		= (vnode.flags & LAZY_LIST) === LAZY_LIST,
+		isFixed		= (vnode.flags & FIXED_BODY) === FIXED_BODY,
+		isKeyed		= (vnode.flags & KEYED_LIST) === KEYED_LIST,
+		domSync		= !isFixed && vnode.type === ELEMENT,
+		doFind		= true,
+		find		= (
+			isKeyed ? findSeqKeyed :				// keyed lists/lazyLists (falls back to findBinKeyed when > SEQ_FAILS_MAX)
+			isFixed || isLazy ? takeSeqIndex :		// unkeyed lazyLists and FIXED_BODY
+			findSeqThorough							// more complex stuff
+		);
+
+	if (domSync && nlen === 0) {
+		clearChildren(donor);
+		if (isLazy)
+			{ vnode.body = []; }	// nbody.tpl(all);
+		return;
+	}
+
+	var donor2,
+		node2,
+		foundIdx,
+		patched = 0,
+		everNonseq = false,
+		fromIdx = 0;		// first unrecycled node (search head)
+
+	if (isLazy) {
+		var fnode2 = {key: null};
+		var nbodyNew = Array(nlen);
+	}
+
+	for (var i = 0; i < nlen; i++) {
+		if (isLazy) {
+			var remake = false;
+			var diffRes = null;
+
+			if (doFind) {
+				if (isKeyed)
+					{ fnode2.key = nbody.key(i); }
+
+				donor2 = find(fnode2, obody, fromIdx);
+			}
+
+			if (donor2 != null) {
+                foundIdx = donor2.idx;
+				diffRes = nbody.diff(i, donor2);
+
+				// diff returns same, so cheaply adopt vnode without patching
+				if (diffRes === true) {
+					node2 = donor2;
+					node2.parent = vnode;
+					node2.idx = i;
+				}
+				// diff returns new diffVals, so generate new vnode & patch
+				else
+					{ remake = true; }
+			}
+			else
+				{ remake = true; }
+
+			if (remake) {
+				node2 = nbody.tpl(i);			// what if this is a VVIEW, VMODEL, injected element?
+				preProc(node2, vnode, i);
+
+				node2._diff = diffRes != null ? diffRes : nbody.diff(i);
+
+				if (donor2 != null)
+					{ patch(node2, donor2); }
+			}
+			else {
+				// TODO: flag tmp FIXED_BODY on unchanged nodes?
+
+				// domSync = true;		if any idx changes or new nodes added/removed
+			}
+
+			nbodyNew[i] = node2;
+		}
+		else {
+			var node2 = nbody[i];
+			var type2 = node2.type;
+
+			// ELEMENT,TEXT,COMMENT
+			if (type2 <= COMMENT) {
+				if (donor2 = doFind && find(node2, obody, fromIdx)) {
+					patch(node2, donor2);
+					foundIdx = donor2.idx;
+				}
+			}
+			else if (type2 === VVIEW) {
+				if (donor2 = doFind && find(node2, obody, fromIdx)) {		// update/moveTo
+					var vm = donor2.vm._update(node2.data, vnode, i);		// withDOM
+					foundIdx = donor2.idx;
+				}
+				else
+					{ var vm = createView(node2.view, node2.data, node2.key, node2.opts)._redraw(vnode, i, false); }	// createView, no dom (will be handled by sync below)
+
+				type2 = vm.node.type;
+			}
+			else if (type2 === VMODEL) {
+				var vm = node2.vm._update(node2.data, vnode, i);
+				type2 = vm.node.type;
+			}
+		}
+
+		// found donor & during a sequential search ...at search head
+		if (donor2 != null) {
+			if (foundIdx === fromIdx) {
+				// advance head
+				fromIdx++;
+				// if all old vnodes adopted and more exist, stop searching
+				if (fromIdx === olen && nlen > olen) {
+					// short-circuit find, allow loop just create/init rest
+					donor2 = null;
+					doFind = false;
+				}
+			}
+			else
+				{ everNonseq = true; }
+
+			if (olen > 100 && everNonseq && ++patched % 10 === 0)
+				{ while (fromIdx < olen && alreadyAdopted(obody[fromIdx]))
+					{ fromIdx++; } }
+		}
+	}
+
+	// replace List w/ new body
+	if (isLazy)
+		{ vnode.body = nbodyNew; }
+
+	domSync && syncChildren(vnode, donor);
+}
+
+// view + key serve as the vm's unique identity
+function ViewModel(view, data, key, opts) {
+	var vm = this;
+
+	vm.view = view;
+	vm.data = data;
+	vm.key = key;
+
+	if (opts) {
+		vm.opts = opts;
+		vm.config(opts);
+	}
+
+	var out = isPlainObj(view) ? view : view.call(vm, vm, data, key, opts);
+
+	if (isFunc(out))
+		{ vm.render = out; }
+	else {
+		vm.render = out.render;
+		vm.config(out);
+	}
+
+	// these must be wrapped here since they're debounced per view
+	vm._redrawAsync = raft(function (_) { return vm._redraw(); });
+	vm._updateAsync = raft(function (newData) { return vm._update(newData); });
+
+	vm.init && vm.init.call(vm, vm, vm.data, vm.key, opts);
+}
+
+var ViewModelProto = ViewModel.prototype = {
+	constructor: ViewModel,
+
+	_diff:	null,	// diff cache
+
+	init:	null,
+	view:	null,
+	key:	null,
+	data:	null,
+	state:	null,
+	api:	null,
+	opts:	null,
+	node:	null,
+	hooks:	null,
+	onevent: noop,
+	refs:	null,
+	render:	null,
+
+	mount: mount,
+	unmount: unmount,
+	config: function(opts) {
+		var t = this;
+
+		if (opts.init)
+			{ t.init = opts.init; }
+		if (opts.diff)
+			{ t.diff = opts.diff; }
+		if (opts.onevent)
+			{ t.onevent = opts.onevent; }
+
+		// maybe invert assignment order?
+		if (opts.hooks)
+			{ t.hooks = assignObj(t.hooks || {}, opts.hooks); }
+
+		
+	},
+	parent: function() {
+		return getVm(this.node.parent);
+	},
+	root: function() {
+		var p = this.node;
+
+		while (p.parent)
+			{ p = p.parent; }
+
+		return p.vm;
+	},
+	redraw: function(sync) {
+		var vm = this;
+		sync ? vm._redraw() : vm._redrawAsync();
+		return vm;
+	},
+	update: function(newData, sync) {
+		var vm = this;
+		sync ? vm._update(newData) : vm._updateAsync(newData);
+		return vm;
+	},
+
+	_update: updateSync,
+	_redraw: redrawSync,
+	_redrawAsync: null,
+	_updateAsync: null,
+};
+
+function mount(el, isRoot) {
+	var vm = this;
+
+	if (isRoot) {
+		clearChildren({el: el, flags: 0});
+
+		vm._redraw(null, null, false);
+
+		// if placeholder node doesnt match root tag
+		if (el.nodeName.toLowerCase() !== vm.node.tag) {
+			hydrate(vm.node);
+			insertBefore(el.parentNode, vm.node.el, el);
+			el.parentNode.removeChild(el);
+		}
+		else
+			{ insertBefore(el.parentNode, hydrate(vm.node, el), el); }
+	}
+	else {
+		vm._redraw(null, null);
+
+		if (el)
+			{ insertBefore(el, vm.node.el); }
+	}
+
+	if (el)
+		{ drainDidHooks(vm); }
+
+	return vm;
+}
+
+// asSub means this was called from a sub-routine, so don't drain did* hook queue
+function unmount(asSub) {
+	var vm = this;
+
+	var node = vm.node;
+	var parEl = node.el.parentNode;
+
+	// edge bug: this could also be willRemove promise-delayed; should .then() or something to make sure hooks fire in order
+	removeChild(parEl, node.el);
+
+	if (!asSub)
+		{ drainDidHooks(vm); }
+}
+
+function reParent(vm, vold, newParent, newIdx) {
+	if (newParent != null) {
+		newParent.body[newIdx] = vold;
+		vold.idx = newIdx;
+		vold.parent = newParent;
+	}
+	return vm;
+}
+
+function redrawSync(newParent, newIdx, withDOM) {
+	var isRedrawRoot = newParent == null;
+	var vm = this;
+	var isMounted = vm.node && vm.node.el && vm.node.el.parentNode;
+
+	var vold = vm.node, oldDiff, newDiff;
+
+	if (vm.diff != null) {
+		oldDiff = vm._diff;
+		vm._diff = newDiff = vm.diff(vm, vm.data);
+
+		if (vold != null) {
+			var cmpFn = isArr(oldDiff) ? cmpArr : cmpObj;
+			var isSame = oldDiff === newDiff || cmpFn(oldDiff, newDiff);
+
+			if (isSame)
+				{ return reParent(vm, vold, newParent, newIdx); }
+		}
+	}
+
+	isMounted && vm.hooks && fireHook("willRedraw", vm, vm.data);
+
+	var vnew = vm.render.call(vm, vm, vm.data, oldDiff, newDiff);
+
+	if (vnew === vold)
+		{ return reParent(vm, vold, newParent, newIdx); }
+
+	// todo: test result of willRedraw hooks before clearing refs
+	vm.refs = null;
+
+	// always assign vm key to root vnode (this is a de-opt)
+	if (vm.key != null && vnew.key !== vm.key)
+		{ vnew.key = vm.key; }
+
+	vm.node = vnew;
+
+	if (newParent) {
+		preProc(vnew, newParent, newIdx, vm);
+		newParent.body[newIdx] = vnew;
+	}
+	else if (vold && vold.parent) {
+		preProc(vnew, vold.parent, vold.idx, vm);
+		vold.parent.body[vold.idx] = vnew;
+	}
+	else
+		{ preProc(vnew, null, null, vm); }
+
+	if (withDOM !== false) {
+		if (vold) {
+			// root node replacement
+			if (vold.tag !== vnew.tag || vold.key !== vnew.key) {
+				// hack to prevent the replacement from triggering mount/unmount
+				vold.vm = vnew.vm = null;
+
+				var parEl = vold.el.parentNode;
+				var refEl = nextSib(vold.el);
+				removeChild(parEl, vold.el);
+				insertBefore(parEl, hydrate(vnew), refEl);
+
+				// another hack that allows any higher-level syncChildren to set
+				// reconciliation bounds using a live node
+				vold.el = vnew.el;
+
+				// restore
+				vnew.vm = vm;
+			}
+			else
+				{ patch(vnew, vold); }
+		}
+		else
+			{ hydrate(vnew); }
+	}
+
+	isMounted && vm.hooks && fireHook("didRedraw", vm, vm.data);
+
+	if (isRedrawRoot && isMounted)
+		{ drainDidHooks(vm); }
+
+	return vm;
+}
+
+// this also doubles as moveTo
+// TODO? @withRedraw (prevent redraw from firing)
+function updateSync(newData, newParent, newIdx, withDOM) {
+	var vm = this;
+
+	if (newData != null) {
+		if (vm.data !== newData) {
+			vm.hooks && fireHook("willUpdate", vm, newData);
+			vm.data = newData;
+
+			
+		}
+	}
+
+	return vm._redraw(newParent, newIdx, withDOM);
+}
+
+function defineComment(body) {
+	var node = new VNode;
+	node.type = COMMENT;
+	node.body = body;
+	return node;
+}
+
+// placeholder for declared views
+function VView(view, data, key, opts) {
+	this.view = view;
+	this.data = data;
+	this.key = key;
+	this.opts = opts;
+}
+
+VView.prototype = {
+	constructor: VView,
+
+	type: VVIEW,
+	view: null,
+	data: null,
+	key: null,
+	opts: null,
+};
+
+function defineView(view, data, key, opts) {
+	return new VView(view, data, key, opts);
+}
+
+// placeholder for injected ViewModels
+function VModel(vm) {
+	this.vm = vm;
+}
+
+VModel.prototype = {
+	constructor: VModel,
+
+	type: VMODEL,
+	vm: null,
+};
+
+function injectView(vm) {
+//	if (vm.node == null)
+//		vm._redraw(null, null, false);
+
+//	return vm.node;
+
+	return new VModel(vm);
+}
+
+function injectElement(el) {
+	var node = new VNode;
+	node.type = ELEMENT;
+	node.el = node.key = el;
+	return node;
+}
+
+function lazyList(items, cfg) {
+	var len = items.length;
+
+	var self = {
+		items: items,
+		length: len,
+		// defaults to returning item identity (or position?)
+		key: function(i) {
+			return cfg.key(items[i], i);
+		},
+		// default returns 0?
+		diff: function(i, donor) {
+			var newVals = cfg.diff(items[i], i);
+			if (donor == null)
+				{ return newVals; }
+			var oldVals = donor._diff;
+			var same = newVals === oldVals || isArr(oldVals) ? cmpArr(newVals, oldVals) : cmpObj(newVals, oldVals);
+			return same || newVals;
+		},
+		tpl: function(i) {
+			return cfg.tpl(items[i], i);
+		},
+		map: function(tpl) {
+			cfg.tpl = tpl;
+			return self;
+		},
+		body: function(vnode) {
+			var nbody = Array(len);
+
+			for (var i = 0; i < len; i++) {
+				var vnode2 = self.tpl(i);
+
+			//	if ((vnode.flags & KEYED_LIST) === KEYED_LIST && self. != null)
+			//		vnode2.key = getKey(item);
+
+				vnode2._diff = self.diff(i);			// holds oldVals for cmp
+
+				nbody[i] = vnode2;
+
+				// run preproc pass (should this be just preProc in above loop?) bench
+				preProc(vnode2, vnode, i);
+			}
+
+			// replace List with generated body
+			vnode.body = nbody;
+		}
+	};
+
+	return self;
+}
+
+// prevent GCC from inlining some large funcs (which negatively affects Chrome's JIT)
+window.syncChildren = syncChildren;
+
+var nano$1 = {
+	config: config,
+
+	ViewModel: ViewModel,
+	VNode: VNode,
+
+	createView: createView,
+
+	defineElement: defineElement,
+	defineSvgElement: defineSvgElement,
+	defineText: defineText,
+	defineComment: defineComment,
+	defineView: defineView,
+
+	injectView: injectView,
+	injectElement: injectElement,
+
+	lazyList: lazyList,
+
+	FIXED_BODY: FIXED_BODY,
+	DEEP_REMOVE: DEEP_REMOVE,
+	KEYED_LIST: KEYED_LIST,
+	LAZY_LIST: LAZY_LIST,
+};
+
+function protoPatch(n) {
+	return patch$1(this, n);
+}
+
+// newNode can be either {class: style: } or full new VNode
+// will/didPatch hooks?
+function patch$1(o, n) {
+	if (n.type != null) {
+		// no full patching of view roots, just use redraw!
+		if (o.vm != null)
+			{ return; }
+
+		preProc(n, o.parent, o.idx, null);
+		o.parent.body[o.idx] = n;
+		patch(n, o);
+		drainDidHooks(getVm(n));
+	}
+	else {
+		// TODO: re-establish refs
+
+		// shallow-clone target
+		var donor = Object.create(o);
+		// fixate orig attrs
+		donor.attrs = assignObj({}, o.attrs);
+		// assign new attrs into live targ node
+		var oattrs = assignObj(o.attrs, n);
+		// prepend any fixed shorthand class
+		if (o._class != null) {
+			var aclass = oattrs.class;
+			oattrs.class = aclass != null && aclass !== "" ? o._class + " " + aclass : o._class;
+		}
+
+		patchAttrs(o, donor);
+	}
+}
+
+VNodeProto.patch = protoPatch;
+
+return nano$1;
+
+})));
+
 
 },{}],6:[function(require,module,exports){
 !function(a,b){"function"==typeof define&&define.amd?define([],function(){return a.returnExportsGlobal=b()}):"object"==typeof exports?module.exports=b():a.ResizeSensor=b()}(this,function(){var a=function(){"use strict";function a(){this.q=[],this.add=function(a){this.q.push(a)};var a,b;this.call=function(){for(a=0,b=this.q.length;b>a;a++)this.q[a].call()}}function b(a,b){return a.currentStyle?a.currentStyle[b]:window.getComputedStyle?window.getComputedStyle(a,null).getPropertyValue(b):a.style[b]}function c(c,e){if(c.resizedAttached){if(c.resizedAttached)return void c.resizedAttached.add(e)}else c.resizedAttached=new a,c.resizedAttached.add(e);c.resizeSensor=document.createElement("div"),c.resizeSensor.className="resize-sensor";var f="position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; z-index: -1; visibility: hidden; opacity: 0;",g="position: absolute; left: 0; top: 0; transition: 0s;";c.resizeSensor.style.cssText=f,c.resizeSensor.innerHTML='<div class="resize-sensor-expand" style="'+f+'"><div style="'+g+'"></div></div><div class="resize-sensor-shrink" style="'+f+'"><div style="'+g+' width: 200%; height: 200%"></div></div>',c.appendChild(c.resizeSensor),"static"==b(c,"position")&&(c.style.position="relative");var h=c.resizeSensor.childNodes[0],i=h.childNodes[0],j=c.resizeSensor.childNodes[1],k=function(){i.style.width=1e5+"px",i.style.height=1e5+"px",h.scrollLeft=1e5,h.scrollTop=1e5,j.scrollLeft=1e5,j.scrollTop=1e5};k();var l=!1,m=function(){c.resizedAttached&&(l&&(c.resizedAttached.call(),l=!1),d(m))};d(m);var n,o,p,q,r=function(){((p=c.offsetWidth)!=n||(q=c.offsetHeight)!=o)&&(l=!0,n=p,o=q),k()},s=function(a,b,c){a.attachEvent?a.attachEvent("on"+b,c):a.addEventListener(b,c)};s(h,"scroll",r),s(j,"scroll",r)}var d=window.requestAnimationFrame||window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||function(a){return window.setTimeout(a,20)},e=function(a,b){var d=this,e=Object.prototype.toString.call(a),f=d._isCollectionTyped="[object Array]"===e||"[object NodeList]"===e||"[object HTMLCollection]"===e||"undefined"!=typeof jQuery&&a instanceof window.jQuery||"undefined"!=typeof Elements&&a instanceof window.Elements;if(d._element=a,f)for(var g=0,h=a.length;h>g;g++)c(a[g],b);else c(a,b)};return e.prototype.detach=function(){var a=this,b=a._isCollectionTyped,c=a._element;if(b)for(var d=0,f=c.length;f>d;d++)e.detach(c[d]);else e.detach(c)},e.detach=function(a){a.resizeSensor&&(a.removeChild(a.resizeSensor),delete a.resizeSensor,delete a.resizedAttached)},e}();return a});
@@ -1862,7 +3522,7 @@ function(a){null==this.node&&this._redraw(null,null,!1);return Z(this.node,a)};F
 },{}],8:[function(require,module,exports){
 'use strict';
 
-var domvm = require('domvm');
+var domvm = require('domvm/dist/nano/domvm.nano.js');
 var iv = domvm.injectView;
 
 class Ctor {
@@ -1902,10 +3562,10 @@ class Ctor {
 }
 
 module.exports = Ctor;
-},{"domvm":5}],9:[function(require,module,exports){
+},{"domvm/dist/nano/domvm.nano.js":5}],9:[function(require,module,exports){
 'use strict';
 
-var domvm = require('domvm');
+var domvm = require('domvm/dist/nano/domvm.nano.js');
 var config = require('../config');
 var StyleSheet = require('../utils/StyleSheet');
 var UIBase = require('../Base');
@@ -1996,10 +3656,10 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../Base":8,"../config":13,"../utils/StyleSheet":20,"domvm":5}],10:[function(require,module,exports){
+},{"../Base":8,"../config":13,"../utils/StyleSheet":20,"domvm/dist/nano/domvm.nano.js":5}],10:[function(require,module,exports){
 'use strict';
 
-var domvm = require('domvm');
+var domvm = require('domvm/dist/nano/domvm.nano.js');
 var config = require('../config');
 var StyleSheet = require('../utils/StyleSheet');
 var UIBase = require('../Base');
@@ -2190,10 +3850,10 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../Base":8,"../config":13,"../utils/StyleSheet":20,"domvm":5}],11:[function(require,module,exports){
+},{"../Base":8,"../config":13,"../utils/StyleSheet":20,"domvm/dist/nano/domvm.nano.js":5}],11:[function(require,module,exports){
 'use strict';
 
-var domvm = require('domvm');
+var domvm = require('domvm/dist/nano/domvm.nano.js');
 var config = require('../config');
 var StyleSheet = require('../utils/StyleSheet');
 var UIBase = require('../Base');
@@ -2233,10 +3893,10 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../Base":8,"../config":13,"../utils/StyleSheet":20,"domvm":5}],12:[function(require,module,exports){
+},{"../Base":8,"../config":13,"../utils/StyleSheet":20,"domvm/dist/nano/domvm.nano.js":5}],12:[function(require,module,exports){
 'use strict';
 
-var domvm = require('domvm');
+var domvm = require('domvm/dist/nano/domvm.nano.js');
 var config = require('../config');
 var StyleSheet = require('../utils/StyleSheet');
 var ResizeSensor = require('resize-sensor');
@@ -2460,7 +4120,7 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../Base":8,"../Close":10,"../config":13,"../utils/StyleSheet":20,"domvm":5,"resize-sensor":6}],13:[function(require,module,exports){
+},{"../Base":8,"../Close":10,"../config":13,"../utils/StyleSheet":20,"domvm/dist/nano/domvm.nano.js":5,"resize-sensor":6}],13:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -2505,7 +4165,7 @@ module.exports = Ctor;
 },{"../../Base":8}],15:[function(require,module,exports){
 'use strict';
 
-var domvm = require('domvm');
+var domvm = require('domvm/dist/nano/domvm.nano.js');
 var iv = domvm.injectView;
 var el = domvm.defineElement;
 
@@ -2650,10 +4310,10 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../../Close":10,"../../config":13,"../../utils/StyleSheet":20,"../Base":14,"domvm":5}],16:[function(require,module,exports){
+},{"../../Close":10,"../../config":13,"../../utils/StyleSheet":20,"../Base":14,"domvm/dist/nano/domvm.nano.js":5}],16:[function(require,module,exports){
 'use strict';
 
-var domvm = require('domvm');
+var domvm = require('domvm/dist/nano/domvm.nano.js');
 var config = require('../../config');
 var StyleSheet = require('../../utils/StyleSheet');
 var UIBase = require('../Base');
@@ -2854,7 +4514,7 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../../config":13,"../../utils/StyleSheet":20,"../Base":14,"dom-xinput":4,"domvm":5}],17:[function(require,module,exports){
+},{"../../config":13,"../../utils/StyleSheet":20,"../Base":14,"dom-xinput":4,"domvm/dist/nano/domvm.nano.js":5}],17:[function(require,module,exports){
 'use strict';
 
 var config = require('../../config');
@@ -2862,7 +4522,7 @@ var StyleSheet = require('../../utils/StyleSheet');
 var UIBase = require('../Base');
 var UITextField = require('../Text');
 var anime = require('animejs');
-var domvm = require('domvm');
+var domvm = require('domvm/dist/nano/domvm.nano.js');
 var el = domvm.defineElement;
 var iv = domvm.injectView;
 var svg = domvm.defineSvgElement;
@@ -3059,7 +4719,7 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../../config":13,"../../utils/StyleSheet":20,"../Base":14,"../Text":16,"animejs":2,"domvm":5}],18:[function(require,module,exports){
+},{"../../config":13,"../../utils/StyleSheet":20,"../Base":14,"../Text":16,"animejs":2,"domvm/dist/nano/domvm.nano.js":5}],18:[function(require,module,exports){
 'use strict';
 
 class Modifier {

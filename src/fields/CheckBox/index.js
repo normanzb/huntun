@@ -1,6 +1,6 @@
 'use strict';
 
-var domvm = require('domvm');
+var domvm = require('domvm/dist/nano/domvm.nano.js');
 var iv = domvm.injectView;
 var el = domvm.defineElement;
 
