@@ -4007,24 +4007,24 @@ function updatePosition(element, data, vm) {
 }
 
 var view = {
-    render: function(vm, data) {
+    render: function(vm, model) {
         return el('div.' + style.id + 
-            '.' + style.modifiers[data.theme].name + 
-            (data.animateVisible?'.'+style.modifiers[MODIFIER_START_VISIBLE_ANIMATE].name:'') + 
-            (data.hidden?'.' + style.modifiers[MODIFIER_HIDDEN].name:''), {
-                'style': 'z-index: ' + data.style.zIndex + ';'
+            '.' + style.modifiers[model.theme].name + 
+            (model.animateVisible?'.'+style.modifiers[MODIFIER_START_VISIBLE_ANIMATE].name:'') + 
+            (model.hidden?'.' + style.modifiers[MODIFIER_HIDDEN].name:''), {
+                'style': 'z-index: ' + model.style.zIndex + ';'
             }, 
             [
             el('div.border', {
-                style: 'left: ' + data.style.left + '; top:' + data.style.top + ';',
+                style: 'left: ' + model.style.left + '; top:' + model.style.top + ';',
                 onkeydown: function(){
                     window.console.log(arguments);
                 },
                 _hooks: {
                     didInsert: function(view){
-                        updatePosition(view.el, data, vm);
+                        updatePosition(view.el, model, vm);
                         vm._resizeHandler = function(){
-                            updatePosition(view.el, data, vm);
+                            updatePosition(view.el, model, vm);
                         };
                         window.addEventListener('resize', vm._resizeHandler);
                         vm._resizeSensor = new ResizeSensor(view.el, vm._resizeHandler);
@@ -4035,9 +4035,9 @@ var view = {
                     }
                 }
             }, [
-                el('div.inner', data.views), 
-                (data.has.button?el('div.close-container',[
-                    data.has.button
+                el('div.inner', model.views), 
+                (model.has.button?el('div.close-container',[
+                    model.has.button
                 ]):null)
             ]),
             el('div.backdrop')
@@ -4060,7 +4060,10 @@ function getMaximumZIndex(base) {
 }
 
 function getCenterisedOffset(element) {
+    var backUp = element.style.display;
+    element.style.display = 'block';
     let box = element.getBoundingClientRect();
+    element.style.display = backUp;
     var ret = {
         top: 0,
         left: 0
@@ -4086,7 +4089,7 @@ class Ctor extends UIBase {
                 top: 0
             },
             animateVisible: false,
-            hidden: false
+            hidden: true
         });
 
         if (this.model.has.button) {

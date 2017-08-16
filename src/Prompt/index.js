@@ -161,7 +161,10 @@ function getMaximumZIndex(base) {
 }
 
 function getCenterisedOffset(element) {
+    var backUp = element.style.display;
+    element.style.display = 'block';
     let box = element.getBoundingClientRect();
+    element.style.display = backUp;
     var ret = {
         top: 0,
         left: 0
