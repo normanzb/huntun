@@ -3679,15 +3679,22 @@ var view = {
                             'scrollTop':'scrollLeft';
                         var parentLengthProp = data.directions.scrolling === 'vertical'?
                             'scrollHeight':'scrollWidth';
+                        var innerPositionProp = (data.directions.bar === 'left' || data.directions.bar === 'right')?'scrollTop':'scrollLeft';
                         function handleResize(){
-                            data.length = parent[parentLengthProp] * 1;
-                            data.viewport = parent[parentViewportSizeProp] * 1;
-                            data.position = parent[parentPositionProp] * 1;
-                            data.prvt.handle = data.viewport / data.length * data.viewport;
+                            if (data.handlers.resize) {
+                                data.handlers.resize();
+                            }
+                            else {
+                                data.length = parent[parentLengthProp] * 1;
+                                data.viewport = parent[parentViewportSizeProp] * 1;
+                                data.position = parent[parentPositionProp] * 1;
+                            }
+                            data.prvt.innerElementPosition = parent[innerPositionProp] * 1;
+                            data.prvt.handle = data.viewport / data.length * parent[parentViewportSizeProp];
                             if (data.prvt.handle < 20) {
                                 data.prvt.handle = 20;
                             }
-                            data.prvt.position = data.position / (data.length - data.viewport) * (data.viewport - data.prvt.handle);
+                            data.prvt.position = data.position / (data.length - data.viewport) * (parent[parentViewportSizeProp] - data.prvt.handle);
                             data.directions.text = window.getComputedStyle(parent).direction === 'rtl'?'right':'left';
                             vm.redraw(true);
                         }
@@ -3712,11 +3719,11 @@ var view = {
                             animationFrame.request(handleFrameRequest);
                         }
 
-                        vm._handleResize = handleResize;
+                        vm.__container.handleResize = handleResize;
                         vm._handleFrameRequest = handleFrameRequest;
                         vm._resizeSensor = new ResizeSensor(parent, handleResize);
                         parent.addEventListener('scroll', handleResize, {passive: false});
-                        parent.addEventListener('mousewheel', data.on.mousewheel, {passive: false});
+                        parent.addEventListener('mousewheel', data.handlers.mousewheel, {passive: false});
                         animationFrame.request(handleFrameRequest);
                         handleResize();
                     },
@@ -3727,15 +3734,15 @@ var view = {
                         }
                         vm._resizeSensor.detach();
                         vm._resizeSensor = null;
-                        parent.removeEventListener('scroll', vm._handleResize);
-                        parent.removeEventListener('mousewheel', data.on.mousewheel);
+                        parent.removeEventListener('scroll', vm.__container.handleResize);
+                        parent.removeEventListener('mousewheel', data.handlers.mousewheel);
                         animationFrame.cancel(vm._handleFrameRequest);
-                        vm._handleResize = null;
+                        vm.__container.handleResize = null;
                         vm._handleFrameRequest = null;
                     }
                 },
                 style: `
-                    top: ${data.position}px;
+                    top: ${data.prvt.innerElementPosition}px;
                 `
             }, [
                 el('div.inner', [
@@ -3765,20 +3772,8 @@ class Ctor extends UIBase {
             length: 0,
             position: 0,
             viewport: 0,
-            directions: {
-                scrolling: 'vertical',
-                bar: 'right',
-                text: 'left'
-            },
             enable: {
                 indicator: true
-            },
-            on: {
-                mousewheel: function(evt) {
-                    var dy = evt.deltaY;
-                    me.model.prvt.scrollTop = me.model.prvt.scrollTop + dy * 3;
-                    evt.preventDefault();
-                }
             }
         }, me.model, {
             prvt: {
@@ -3787,6 +3782,18 @@ class Ctor extends UIBase {
                 scrollLeft: 0
             }
         });
+        me.model.handlers = Object.assign({
+            mousewheel: function(evt) {
+                var dy = evt.deltaY;
+                me.model.prvt.scrollTop = me.model.prvt.scrollTop + dy * 3;
+                evt.preventDefault();
+            }
+        }, me.model.handlers);
+        me.model.directions = Object.assign({
+            scrolling: 'vertical',
+            bar: 'right',
+            text: 'left'
+        }, me.model.directions);
 
         me.init(view, style);
     }
