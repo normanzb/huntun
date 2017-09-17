@@ -8,7 +8,7 @@ var el = domvm.defineElement;
 var PREFIX_CSS = 'context-ui-label';
 
 var style = new StyleSheet(`
-    font-family: Maitree;
+    font-family: ${config.fields.fontFamily};
     font-size: 20px;
     line-height: 1.2em;
     margin: 14px auto;

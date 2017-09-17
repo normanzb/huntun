@@ -5,6 +5,15 @@ const UIPathField = require('./src/fields/TextButton');
 const UITextField = require('./src/fields/Text');
 const UICheckBoxField = require('./src/fields/CheckBox');
 const UIButton = require('./src/Button');
+const UIScrollBar = require('./src/ScrollBar');
+
+var scrollBar = new UIScrollBar({
+
+});
+
+// Put it into a div because chrome team managed by Sundar Pichai sucks!
+// look at how long has this bug been there https://bugs.chromium.org/p/chromium/issues/detail?id=423935
+scrollBar.mount(document.body.querySelector('.paragraphs'));
 
 var prompt = new UIPrompt({
     fields: [
