@@ -16,13 +16,15 @@ class Ctor {
     }
     mount(...args) {
         var ret;
-        for(var l = this.model.fields.length; l--;) {
-            if (!this.model.fields[l].style) {
-                continue;
-            }
-        }
         if (this.viewModel) {
             ret = this.viewModel.mount(...args);
+        }
+        return ret;
+    }
+    unmount(...args) {
+        var ret;
+        if (this.viewModel) {
+            ret = this.viewModel.unmount(...args);
         }
         return ret;
     }

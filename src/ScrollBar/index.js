@@ -176,6 +176,7 @@ var view = {
                         if (!parent) {
                             return;
                         }
+                        data.prvt.originalOverflow = parent.style.overflow;
                         parent.style.overflow = 'hidden';
                         var parentViewportSizeProp = data.directions.scrolling === 'vertical'?
                             'offsetHeight':'offsetWidth';
@@ -231,7 +232,7 @@ var view = {
                         animationFrame.request(handleFrameRequest);
                         handleResize();
                     },
-                    didRemove: function(view) {
+                    willRemove: function(view) {
                         var parent = view.el.parentNode;
                         if (!parent) {
                             return;
@@ -243,6 +244,7 @@ var view = {
                         animationFrame.cancel(vm._handleFrameRequest);
                         vm.__container.handleResize = null;
                         vm._handleFrameRequest = null;
+                        parent.style.overflow = data.prvt.originalOverflow;
                     }
                 },
                 style: `
@@ -283,7 +285,8 @@ class Ctor extends UIBase {
             prvt: {
                 handle: 0,
                 scrollTop: 0,
-                scrollLeft: 0
+                scrollLeft: 0,
+                originalOverflow: ''
             }
         });
         me.model.handlers = Object.assign({
