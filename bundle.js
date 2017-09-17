@@ -1,3 +1,3 @@
 window.huntun = {
-    UIScrollBar: require('./src/ScrollBar')
+    ScrollBar: require('./src/ScrollBar')
 };
