@@ -135,7 +135,7 @@ var view = {
                         window.addEventListener('resize', vm._resizeHandler);
                         vm._resizeSensor = new ResizeSensor(view.el, vm._resizeHandler);
                     },
-                    didRemove: function() {
+                    willRemove: function() {
                         window.removeEventListener('resize', vm._resizeHandler);
                         vm._resizeSensor.detach();
                     }

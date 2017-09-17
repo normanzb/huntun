@@ -174,7 +174,7 @@ var view = {
                                     }
                                 };
                             },
-                            didRemove: function() {
+                            willRemove: function() {
                                 vm._xinput = null;
                             }
                         }

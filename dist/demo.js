@@ -3549,13 +3549,15 @@ class Ctor {
     }
     mount(...args) {
         var ret;
-        for(var l = this.model.fields.length; l--;) {
-            if (!this.model.fields[l].style) {
-                continue;
-            }
-        }
         if (this.viewModel) {
             ret = this.viewModel.mount(...args);
+        }
+        return ret;
+    }
+    unmount(...args) {
+        var ret;
+        if (this.viewModel) {
+            ret = this.viewModel.unmount(...args);
         }
         return ret;
     }
@@ -4043,7 +4045,7 @@ var view = {
                         window.addEventListener('resize', vm._resizeHandler);
                         vm._resizeSensor = new ResizeSensor(view.el, vm._resizeHandler);
                     },
-                    didRemove: function() {
+                    willRemove: function() {
                         window.removeEventListener('resize', vm._resizeHandler);
                         vm._resizeSensor.detach();
                     }
@@ -4327,6 +4329,7 @@ var view = {
                         if (!parent) {
                             return;
                         }
+                        data.prvt.originalOverflow = parent.style.overflow;
                         parent.style.overflow = 'hidden';
                         var parentViewportSizeProp = data.directions.scrolling === 'vertical'?
                             'offsetHeight':'offsetWidth';
@@ -4334,15 +4337,22 @@ var view = {
                             'scrollTop':'scrollLeft';
                         var parentLengthProp = data.directions.scrolling === 'vertical'?
                             'scrollHeight':'scrollWidth';
+                        var innerPositionProp = (data.directions.bar === 'left' || data.directions.bar === 'right')?'scrollTop':'scrollLeft';
                         function handleResize(){
-                            data.length = parent[parentLengthProp] * 1;
-                            data.viewport = parent[parentViewportSizeProp] * 1;
-                            data.position = parent[parentPositionProp] * 1;
-                            data.prvt.handle = data.viewport / data.length * data.viewport;
+                            if (data.handlers.resize) {
+                                data.handlers.resize();
+                            }
+                            else {
+                                data.length = parent[parentLengthProp] * 1;
+                                data.viewport = parent[parentViewportSizeProp] * 1;
+                                data.position = parent[parentPositionProp] * 1;
+                            }
+                            data.prvt.innerElementPosition = parent[innerPositionProp] * 1;
+                            data.prvt.handle = data.viewport / data.length * parent[parentViewportSizeProp];
                             if (data.prvt.handle < 20) {
                                 data.prvt.handle = 20;
                             }
-                            data.prvt.position = data.position / (data.length - data.viewport) * (data.viewport - data.prvt.handle);
+                            data.prvt.position = data.position / (data.length - data.viewport) * (parent[parentViewportSizeProp] - data.prvt.handle);
                             data.directions.text = window.getComputedStyle(parent).direction === 'rtl'?'right':'left';
                             vm.redraw(true);
                         }
@@ -4367,30 +4377,31 @@ var view = {
                             animationFrame.request(handleFrameRequest);
                         }
 
-                        vm._handleResize = handleResize;
+                        vm.__container.handleResize = handleResize;
                         vm._handleFrameRequest = handleFrameRequest;
                         vm._resizeSensor = new ResizeSensor(parent, handleResize);
                         parent.addEventListener('scroll', handleResize, {passive: false});
-                        parent.addEventListener('mousewheel', data.on.mousewheel, {passive: false});
+                        parent.addEventListener('mousewheel', data.handlers.mousewheel, {passive: false});
                         animationFrame.request(handleFrameRequest);
                         handleResize();
                     },
-                    didRemove: function(view) {
+                    willRemove: function(view) {
                         var parent = view.el.parentNode;
                         if (!parent) {
                             return;
                         }
                         vm._resizeSensor.detach();
                         vm._resizeSensor = null;
-                        parent.removeEventListener('scroll', vm._handleResize);
-                        parent.removeEventListener('mousewheel', data.on.mousewheel);
+                        parent.removeEventListener('scroll', vm.__container.handleResize);
+                        parent.removeEventListener('mousewheel', data.handlers.mousewheel);
                         animationFrame.cancel(vm._handleFrameRequest);
-                        vm._handleResize = null;
+                        vm.__container.handleResize = null;
                         vm._handleFrameRequest = null;
+                        parent.style.overflow = data.prvt.originalOverflow;
                     }
                 },
                 style: `
-                    top: ${data.position}px;
+                    top: ${data.prvt.innerElementPosition}px;
                 `
             }, [
                 el('div.inner', [
@@ -4420,28 +4431,29 @@ class Ctor extends UIBase {
             length: 0,
             position: 0,
             viewport: 0,
-            directions: {
-                scrolling: 'vertical',
-                bar: 'right',
-                text: 'left'
-            },
             enable: {
                 indicator: true
-            },
-            on: {
-                mousewheel: function(evt) {
-                    var dy = evt.deltaY;
-                    me.model.prvt.scrollTop = me.model.prvt.scrollTop + dy * 3;
-                    evt.preventDefault();
-                }
             }
         }, me.model, {
             prvt: {
                 handle: 0,
                 scrollTop: 0,
-                scrollLeft: 0
+                scrollLeft: 0,
+                originalOverflow: ''
             }
         });
+        me.model.handlers = Object.assign({
+            mousewheel: function(evt) {
+                var dy = evt.deltaY;
+                me.model.prvt.scrollTop = me.model.prvt.scrollTop + dy * 3;
+                evt.preventDefault();
+            }
+        }, me.model.handlers);
+        me.model.directions = Object.assign({
+            scrolling: 'vertical',
+            bar: 'right',
+            text: 'left'
+        }, me.model.directions);
 
         me.init(view, style);
     }
@@ -4814,7 +4826,7 @@ var view = {
                                     }
                                 };
                             },
-                            didRemove: function() {
+                            willRemove: function() {
                                 vm._xinput = null;
                             }
                         }
