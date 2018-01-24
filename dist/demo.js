@@ -50,7 +50,16 @@ var prompt = new UIPrompt({
 });
 
 prompt.mount(document.body);
-prompt.show();
+
+var showButton = new UIButton({
+    text: 'Submit',
+    events: {
+        onClick: function() {
+            prompt.show();
+        }
+    }
+})
+showButton.mount(document.body.querySelector('.show'));
 
 },{"./src/Button":9,"./src/Label":11,"./src/Prompt":12,"./src/ScrollBar":13,"./src/fields/CheckBox":16,"./src/fields/Text":17,"./src/fields/TextButton":18}],2:[function(require,module,exports){
 /*

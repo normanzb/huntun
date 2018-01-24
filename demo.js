@@ -6,7 +6,10 @@ const UITextField = require('./src/fields/Text');
 const UICheckBoxField = require('./src/fields/CheckBox');
 const UIButton = require('./src/Button');
 const UIScrollBar = require('./src/ScrollBar');
+const UIRoadBook = require('./src/RoadBook');
 
+var paragraphs = document.body.querySelector('.paragraphs');
+var paragraphsInner = document.body.querySelector('.paragraphs > .inner');
 var scrollBar = new UIScrollBar({
 
 });
@@ -49,4 +52,18 @@ var prompt = new UIPrompt({
 });
 
 prompt.mount(document.body);
-prompt.show();
+
+var showButton = new UIButton({
+    text: 'Submit',
+    events: {
+        onClick: function() {
+            prompt.show();
+        }
+    }
+})
+showButton.mount(document.body.querySelector('.show'));
+
+var roadBook = new UIRoadBook({
+
+});
+roadBook.mount(paragraphsInner);
