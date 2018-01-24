@@ -1,4 +1,4 @@
-var huntun = window.huntun = {
+window.huntun = {
     ScrollBar: require('./src/ScrollBar')
 };
-return huntun;
+module.exports = huntun;
