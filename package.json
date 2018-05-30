@@ -8,7 +8,7 @@
     "blueimp-md5": "^2.8.0",
     "browserify": "^15.2.0",
     "dom-xinput": "0.0.4",
-    "domvm": "^3.0.5",
+    "domvm": "~3.0.5",
     "exorcist": "^0.4.0",
     "lessify": "^1.0.1",
     "resize-sensor": "0.0.6",
