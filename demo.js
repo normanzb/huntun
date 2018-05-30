@@ -6,7 +6,6 @@ const UITextField = require('./src/fields/Text');
 const UICheckBoxField = require('./src/fields/CheckBox');
 const UIButton = require('./src/Button');
 const UIScrollBar = require('./src/ScrollBar');
-const UIRoadBook = require('./src/RoadBook');
 
 var paragraphs = document.body.querySelector('.paragraphs');
 var paragraphsInner = document.body.querySelector('.paragraphs > .inner');
@@ -62,8 +61,3 @@ var showButton = new UIButton({
     }
 })
 showButton.mount(document.body.querySelector('.show'));
-
-var roadBook = new UIRoadBook({
-
-});
-roadBook.mount(paragraphsInner);

@@ -8,6 +8,8 @@ const UICheckBoxField = require('./src/fields/CheckBox');
 const UIButton = require('./src/Button');
 const UIScrollBar = require('./src/ScrollBar');
 
+var paragraphs = document.body.querySelector('.paragraphs');
+var paragraphsInner = document.body.querySelector('.paragraphs > .inner');
 var scrollBar = new UIScrollBar({
 
 });
@@ -60,7 +62,6 @@ var showButton = new UIButton({
     }
 })
 showButton.mount(document.body.querySelector('.show'));
-
 },{"./src/Button":9,"./src/Label":11,"./src/Prompt":12,"./src/ScrollBar":13,"./src/fields/CheckBox":16,"./src/fields/Text":17,"./src/fields/TextButton":18}],2:[function(require,module,exports){
 /*
  2017 Julian Garnier

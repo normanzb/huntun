@@ -1,9 +1,13 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.bundle = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 window.huntun = {
-    ScrollBar: require('./src/ScrollBar')
+    ScrollBar: require('./src/ScrollBar'),
+    Prompt: require('./src/Prompt'),
+    Button: require('./src/Button'),
+    Close: require('./src/Close'),
+    Label: require('./src/Label')
 };
 module.exports = huntun;
-},{"./src/ScrollBar":7}],2:[function(require,module,exports){
+},{"./src/Button":7,"./src/Close":8,"./src/Label":9,"./src/Prompt":10,"./src/ScrollBar":11}],2:[function(require,module,exports){
 /*
  * JavaScript MD5
  * https://github.com/blueimp/JavaScript-MD5
@@ -3500,6 +3504,581 @@ module.exports = Ctor;
 'use strict';
 
 var domvm = require('domvm/dist/nano/domvm.nano.js');
+var config = require('../config');
+var StyleSheet = require('../utils/StyleSheet');
+var UIBase = require('../Base');
+var el = domvm.defineElement;
+var PREFIX_CSS = 'context-ui-button';
+var NAME_THEME_OCEAN = 'ocean';
+
+var style = new StyleSheet(`
+    display: flex;
+
+    font-family: ${config.fields.fontFamily};
+    font-size: ${config.fields.fontSize};
+    line-height: ${config.fields.lineHeight};
+    margin: ${config.fields.marginBlock} auto;
+
+    border-radius: 2px;
+    border-width: 1px;
+    border-style: solid;
+
+    box-sizing: border-box;
+    padding: 0 .8em;
+
+    transition-property: color, background-color;;
+    transition-duration: .3s;
+    transition-timing-function: cubic-bezier(.52,.02,.19,1.02);
+
+    cursor: pointer;
+
+    > .inner
+    {
+        margin: .5em auto;
+        text-align: center;
+        font-size: 1.2em;
+    }
+`, {
+    prefix: PREFIX_CSS
+});
+
+style.modifiers[NAME_THEME_OCEAN] = `
+    border-color: ${config.themes.ocean.prominent};
+    background-color: ${config.themes.ocean.assisting};
+    color: ${config.themes.ocean.prominent};
+
+    &:hover 
+    {
+        background-color: ${config.themes.ocean.prominent};
+        color: ${config.themes.ocean.assisting};
+    }
+`;
+
+style.fonts.google.push(config.fields.fontFamily);
+
+var view = {
+    render: function(vm, model) {
+        return el('div.' + style.id + 
+            (model.theme?('.'+style.modifiers[model.theme].name):''), 
+            {
+                onclick: model.events.onClick
+            },
+            [
+                el('div.inner', [
+                    el('span.text', (model.views && model.views.length > 0)?model.views:model.text)
+                ])
+            ]);
+    }
+};
+
+class Ctor extends UIBase {
+    constructor(...args) {
+        super(...args);
+        var me = this;
+        me.model = Object.assign({}, {
+            text: '',
+            theme: NAME_THEME_OCEAN,
+            events: {
+                onClick: ()=> void 0
+            }
+        }, me.model);
+
+        me.init(view, style);
+    }
+    set onClick(v) {
+        this.model.events.onClick = v;
+        this.viewModel.redraw(true);
+    }
+    get onClick() {
+        return this.model.events.onClick;
+    }
+}
+
+module.exports = Ctor;
+},{"../Base":6,"../config":12,"../utils/StyleSheet":16,"domvm/dist/nano/domvm.nano.js":3}],8:[function(require,module,exports){
+'use strict';
+
+var domvm = require('domvm/dist/nano/domvm.nano.js');
+var config = require('../config');
+var StyleSheet = require('../utils/StyleSheet');
+var UIBase = require('../Base');
+var el = domvm.defineElement;
+var PREFIX_CSS = 'context-ui-close';
+var NAME_THEME_OCEAN = 'ocean';
+
+//const SVG_CROSS = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+//    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="#292c34"></path></svg>`;
+
+var style = new StyleSheet(`
+    font-family: ${config.fields.fontFamily};
+    position: relative;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+
+    transition-property: color;
+    transition-duration: .3s;
+
+    cursor: pointer;
+
+    &:before
+    {
+        content: ' ';
+        display: block;
+        border-radius: 50%;
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0;
+
+        transform: scale(.1);
+        transition-property: transform,opacity;
+        transition-duration: .3s;
+        transition-delay: .05s;
+        transition-timing-function: cubic-bezier(.52,.02,.19,1.02);
+
+        z-index: 0;
+    }
+
+    > .inner
+    {
+        position: relative;
+        z-index: 1
+        > .text 
+        {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            transform: rotate(0);
+
+            transition-property: transform;
+            transition-duration: .3s;
+            transition-delay: .05s;
+            transition-timing-function: cubic-bezier(.52,.02,.19,1.02);
+        }
+        > .text.no-cross
+        {
+            display: none;
+        }
+    }
+
+    &.active
+    {
+        &:before
+        {
+            opacity: 1;
+            transform: scale(1);
+        }
+        > .inner
+        {
+            > .text
+            {
+                transform: rotate(90deg);
+            }
+            > .text.no-cross
+            {
+                display inline-flex;
+            }
+        }
+    }
+`, {
+    prefix: PREFIX_CSS
+});
+
+style.modifiers[NAME_THEME_OCEAN] = `
+    background-color: ${config.themes.ocean.assisting};
+    &:before
+    {
+        background-color: ${config.themes.ocean.prominent};
+    }
+    &.active
+    {
+        color: ${config.themes.ocean.assisting};
+    }
+`;
+
+style.fonts.google.push('Maitree');
+
+var view = {
+    render: function(vm, model) {
+        return el('div.' + style.id + '.' + style.modifiers[model.theme].name + 
+                (
+                    (model.prvt.container.modifier && model.prvt.container.modifier!=='')?
+                    '.'+model.prvt.container.modifier:''
+                ), {
+                onclick: model.events.onClick,
+                onmouseenter: model.prvt.mouseEnterHandler,
+                onmouseleave: model.prvt.mouseLeaveHandler,
+                style: model.size?(`
+                    width: ${model.size}px;
+                    height: ${model.size}px;
+                    border-radius: ${(model.size / 2)}px;
+                    font-size: ${(model.size / 2)}px;
+                    line-height: ${(model.size / 2) + 1}px;
+                    `
+                ):''
+            }, [
+                el('div.inner', [
+                    el('span.text' + 
+                        (model.noCrossByDefault?'.no-cross':''), '✕')
+                ])
+            ]);
+    }
+};
+
+class Ctor extends UIBase {
+    constructor(...args) {
+        super(...args);
+        var me = this;
+        me.model = Object.assign({}, {
+            events: {
+                onClick: ()=> void 0
+            },
+            theme: NAME_THEME_OCEAN,
+            size: null,
+            hoverToActive: true,
+            noCrossByDefault: false
+        }, me.model, {
+            prvt: {
+                container: {
+                    modifier: ''
+                },
+                mouseEnterHandler: function () {
+                    if (!me.model.hoverToActive) {
+                        return;
+                    }
+                    me.active = true;
+                },
+                mouseLeaveHandler: function () {
+                    if (!me.model.hoverToActive) {
+                        return;
+                    }
+                    me.active = false;
+                }
+            }
+        });
+
+        me.init(view, style);
+    }
+    get active () {
+        return this.model.prvt.container.modifier === 'active';
+    }
+    set active (value) {
+        if (value) {
+            this.model.prvt.container.modifier = 'active';
+        }
+        else {
+            this.model.prvt.container.modifier = '';
+        }
+        this.viewModel.redraw(true);
+    }
+    get onClick() {
+        return this.model.events.onClick;
+    }
+    set onClick(func) {
+        this.model.events.onClick = func;
+        this.viewModel.redraw(true);
+    }
+}
+
+module.exports = Ctor;
+},{"../Base":6,"../config":12,"../utils/StyleSheet":16,"domvm/dist/nano/domvm.nano.js":3}],9:[function(require,module,exports){
+'use strict';
+
+var domvm = require('domvm/dist/nano/domvm.nano.js');
+var config = require('../config');
+var StyleSheet = require('../utils/StyleSheet');
+var UIBase = require('../Base');
+var el = domvm.defineElement;
+var PREFIX_CSS = 'context-ui-label';
+
+var style = new StyleSheet(`
+    font-family: ${config.fields.fontFamily};
+    font-size: 20px;
+    line-height: 1.2em;
+    margin: 14px auto;
+`, {
+    prefix: PREFIX_CSS
+});
+
+style.fonts.google.push(config.fields.fontFamily);
+
+var view = {
+    render: function(vm, data) {
+        return el('div.' + style.id, [
+                el('div.inner', [
+                    el('span.text', data.text)
+                ])
+            ]);
+    }
+};
+
+class Ctor extends UIBase {
+    constructor(...args) {
+        super(...args);
+        this.model = Object.assign({}, {
+            text: ''
+        }, this.model);
+
+        this.init(view, style);
+    }
+}
+
+module.exports = Ctor;
+},{"../Base":6,"../config":12,"../utils/StyleSheet":16,"domvm/dist/nano/domvm.nano.js":3}],10:[function(require,module,exports){
+'use strict';
+
+var domvm = require('domvm/dist/nano/domvm.nano.js');
+var config = require('../config');
+var StyleSheet = require('../utils/StyleSheet');
+var ResizeSensor = require('resize-sensor');
+var UIBase = require('../Base');
+var UIClose = require('../Close');
+var UIFieldBase = require('../fields/Base');
+var el = domvm.defineElement;
+var vi = domvm.injectView;
+
+var PREFIX_CSS = 'context-ui-prompt';
+var NAME_THEME_BRIGHT = 'bright';
+var MODIFIER_START_VISIBLE_ANIMATE = 'animate-visible';
+var MODIFIER_HIDDEN = 'is-hidden';
+
+var style = new StyleSheet(`
+    position: fixed;
+    top: 0;
+    left: 0;
+    > .border
+    {
+        position: fixed;
+        z-index: 1;
+
+        box-sizing: border-box;
+        background: #fff;
+        box-shadow: 0 8px 46px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.03);
+        max-width: 640px;
+        border-radius: 2px;
+        transform: scale(.9);
+        opacity: 0;
+        transition-property: transform,opacity;
+        transition-duration: .3s;
+        transition-delay: .05s;
+        transition-timing-function: cubic-bezier(.52,.02,.19,1.02);
+
+        > .inner
+        {
+            margin: 4ex;
+            text-align: center;
+        }
+
+        > .close-container
+        {
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translate(50%, -50%);
+            border-radius: 50%;
+        }
+    }
+    > .backdrop
+    {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        z-index: 0;
+        transition-property: background-color;
+        transition-duration: .3s;
+        transition-delay: .05s;
+    }
+`, {
+    prefix: PREFIX_CSS
+});
+
+style.fonts.google.push(config.fields.fontFamily);
+
+style.modifiers[MODIFIER_START_VISIBLE_ANIMATE] = `
+    > .border
+    {
+        transform: scale(1);
+        opacity: 1;
+    }
+`;
+
+style.modifiers[NAME_THEME_BRIGHT] = `
+    > .border
+    {
+        
+    }
+    > .backdrop
+    {
+        background: rgba(255, 255, 255, 0);
+    }
+    &.${style.modifiers[MODIFIER_START_VISIBLE_ANIMATE].name}
+    {
+        > .backdrop
+        {
+            background: rgba(255, 255, 255, .8);
+        }
+    }
+`;
+
+style.modifiers[MODIFIER_HIDDEN] = `
+    display: none;
+`;
+
+function updatePosition(element, data, vm) {
+    var rootElement = element.parentNode;
+    var backUp = rootElement.style.display;
+    rootElement.style.display = 'block';
+    var offset = getCenterisedOffset(element);
+    rootElement.style.display = backUp;
+    if (data.style.left != offset.left || data.style.top != offset.top) {
+        data.style.left = offset.left;
+        data.style.top = offset.top;
+        vm.redraw(true);
+    }
+}
+
+var view = {
+    render: function(vm, model) {
+        return el('div.' + style.id + 
+            '.' + style.modifiers[model.theme].name + 
+            (model.animateVisible?'.'+style.modifiers[MODIFIER_START_VISIBLE_ANIMATE].name:'') + 
+            (model.hidden?'.' + style.modifiers[MODIFIER_HIDDEN].name:''), {
+                'style': 'z-index: ' + model.style.zIndex + ';'
+            }, 
+            [
+            el('div.border', {
+                style: 'left: ' + model.style.left + '; top:' + model.style.top + ';',
+                onkeydown: function(){
+                    window.console.log(arguments);
+                },
+                _hooks: {
+                    didInsert: function(view){
+                        updatePosition(view.el, model, vm);
+                        vm._resizeHandler = function(){
+                            updatePosition(view.el, model, vm);
+                        };
+                        window.addEventListener('resize', vm._resizeHandler);
+                        vm._resizeSensor = new ResizeSensor(view.el, vm._resizeHandler);
+                    },
+                    willRemove: function() {
+                        window.removeEventListener('resize', vm._resizeHandler);
+                        vm._resizeSensor.detach();
+                    }
+                }
+            }, [
+                el('div.inner', model.views), 
+                (model.has.button?el('div.close-container',[
+                    model.has.button
+                ]):null)
+            ]),
+            el('div.backdrop')
+        ]);
+    }
+};
+
+function getMaximumZIndex(base) {
+    var all = document.body.querySelectorAll('*');
+    var css, z;
+    var max = base;
+    for(var l = all.length; l--;) {
+        css = window.getComputedStyle(all[l]);
+        z = css.zIndex>>0;
+        if (z > max) {
+            max = z;
+        }
+    }
+    return max;
+}
+
+function getCenterisedOffset(element) {
+    let box = element.getBoundingClientRect();
+    var ret = {
+        top: 0,
+        left: 0
+    };
+    ret.top = (window.innerHeight - box.height) / 2 + "px";
+    ret.left = (window.innerWidth - box.width) / 2 + "px";
+    return ret;
+}
+
+class Ctor extends UIBase {
+    constructor(...args) {
+        super(...args);
+        var me = this;
+        this.model = Object.assign({}, {
+            theme: NAME_THEME_BRIGHT,
+            has: {
+                button: true
+            }
+        }, this.model, {
+            style: {
+                zIndex: 0,
+                left: 0,
+                top: 0
+            },
+            animateVisible: false,
+            hidden: true
+        });
+
+        if (this.model.has.button) {
+            this.uiClose = new UIClose();
+            this.uiClose.onClick = function() {
+                me.hide();
+            };
+            this.model.has.button = vi(this.uiClose.viewModel);
+        }
+
+        this.model.style.zIndex = getMaximumZIndex(this.model.style.zIndex) + 1;
+
+        this.init(view, style);
+    }
+    show() {
+        var me = this;
+        me.model.hidden = false;
+        setTimeout(function(){
+            me.model.animateVisible=true;
+            me.viewModel.redraw(true);
+        }, 0);
+        me.viewModel.redraw(true);
+    }
+    hide() {
+        var me = this;
+        me.model.animateVisible = false;
+        setTimeout(function(){
+            me.model.hidden = true;
+            me.viewModel.redraw(true);
+        }, 500);
+        me.viewModel.redraw(true);
+    }
+    get value() {
+        var ret = {};
+        var field;
+        for(var l = this.model.fields.length; l--;) {
+            field = this.model.fields[l];
+            if (!(field instanceof UIFieldBase)) {
+                continue;
+            }
+            ret[field.name] = field.value;
+        }
+        return ret;
+    }
+}
+
+module.exports = Ctor;
+},{"../Base":6,"../Close":8,"../config":12,"../fields/Base":13,"../utils/StyleSheet":16,"domvm/dist/nano/domvm.nano.js":3,"resize-sensor":4}],11:[function(require,module,exports){
+'use strict';
+
+var domvm = require('domvm/dist/nano/domvm.nano.js');
 var ResizeSensor = require('resize-sensor');
 var animationFrame = require('../utils/animationFrame');
 var config = require('../config');
@@ -3811,7 +4390,7 @@ class Ctor extends UIBase {
 }
 
 module.exports = Ctor;
-},{"../Base":6,"../config":8,"../utils/StyleSheet":11,"../utils/animationFrame":12,"domvm/dist/nano/domvm.nano.js":3,"resize-sensor":4}],8:[function(require,module,exports){
+},{"../Base":6,"../config":12,"../utils/StyleSheet":16,"../utils/animationFrame":17,"domvm/dist/nano/domvm.nano.js":3,"resize-sensor":4}],12:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -3828,7 +4407,28 @@ module.exports = {
 		}
 	}
 };
-},{}],9:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
+'use strict';
+
+var UIBase = require('../../Base');
+
+class Ctor extends UIBase {
+    constructor(...args) {
+        super(...args);
+    }
+    get name() {
+        return this.model.name;
+    }
+    set name(value) {
+        this.model.name = value;
+    }
+    get value() {
+        return this.model.prvt.raw;
+    }
+}
+
+module.exports = Ctor;
+},{"../../Base":6}],14:[function(require,module,exports){
 'use strict';
 
 class Modifier {
@@ -3843,7 +4443,7 @@ class Modifier {
 }
 
 module.exports = Modifier;
-},{}],10:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 var Modifier = require('./Modifier');
 var contextMap = new WeakMap();
@@ -3866,7 +4466,7 @@ function Modifiers(context) {
 }
 
 module.exports = Modifiers;
-},{"./Modifier":9}],11:[function(require,module,exports){
+},{"./Modifier":14}],16:[function(require,module,exports){
 'use strict';
 
 var md5 = require('blueimp-md5');
@@ -3912,7 +4512,7 @@ class StyleSheet {
 
 
 module.exports = StyleSheet;
-},{"./Modifiers":10,"./cssMounter":13,"./fontLoader":14,"blueimp-md5":2,"stylis":5}],12:[function(require,module,exports){
+},{"./Modifiers":15,"./cssMounter":18,"./fontLoader":19,"blueimp-md5":2,"stylis":5}],17:[function(require,module,exports){
 'use strict';
 
 var request = window.requestAnimationFrame;
@@ -3943,7 +4543,7 @@ if (!cancel)
 
 module.exports.request = request.bind(window);
 module.exports.cancel = cancel.bind(window);
-},{}],13:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 exports.mount = function(cssText) {
     var style = document.createElement('style');
@@ -3957,7 +4557,7 @@ exports.mount = function(cssText) {
     var head = document.documentElement.querySelector('head');
     head.appendChild(style);
 };
-},{}],14:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 var Stylis = require('stylis');
 var mounter = require('./cssMounter');
@@ -3974,6 +4574,6 @@ module.exports.load = function(familyName) {
     mounter.mount(cssText);
     loaded[familyName] = true;
 };
-},{"./cssMounter":13,"stylis":5}]},{},[1])(1)
+},{"./cssMounter":18,"stylis":5}]},{},[1])(1)
 });
 //# sourceMappingURL=bundle.js.map
