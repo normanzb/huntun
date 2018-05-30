@@ -1,6 +1,6 @@
 {
   "name": "huntun",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Grab it to go ui solution based on domvm",
   "main": "bundle.js",
   "dependencies": {
