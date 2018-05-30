@@ -15,6 +15,8 @@
     "stylis": "^3.2.8"
   },
   "scripts": {
+    "preversion": "npm i && npm run build",
+    "postversion": "git push && git push --tags",
     "build": "mkdir -p ./dist/ && browserify --standalone bundle --debug --transform [ lessify ] ./bundle  | exorcist ./dist/bundle.js.map > ./dist/bundle.js",
     "build:demo": "mkdir -p ./dist/ && browserify --standalone demo --debug --transform [ lessify ] ./demo  | exorcist ./dist/demo.js.map > ./dist/demo.js"
   },
