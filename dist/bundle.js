@@ -3688,7 +3688,9 @@ var style = new StyleSheet(`
     > .inner
     {
         position: relative;
+        line-height: 1;
         z-index: 1
+        
         > .text 
         {
             display: inline-flex;
@@ -4753,6 +4755,7 @@ var view = {
     render: function(vm, model) {
         if (model.text) {
             model.prvt.inputted = true;
+            model.prvt.raw = model.text;
         }
         return el('div.' + style.id + '.' + style.modifiers[model.theme].name +
             (model.prvt.inputted?'.'+style.modifiers[MODIFIER_HAS_INPUT].name:'') + 

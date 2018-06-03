@@ -136,6 +136,7 @@ var view = {
     render: function(vm, model) {
         if (model.text) {
             model.prvt.inputted = true;
+            model.prvt.raw = model.text;
         }
         return el('div.' + style.id + '.' + style.modifiers[model.theme].name +
             (model.prvt.inputted?'.'+style.modifiers[MODIFIER_HAS_INPUT].name:'') + 

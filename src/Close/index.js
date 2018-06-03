@@ -52,7 +52,9 @@ var style = new StyleSheet(`
     > .inner
     {
         position: relative;
+        line-height: 1;
         z-index: 1
+        
         > .text 
         {
             display: inline-flex;
