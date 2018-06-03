@@ -209,7 +209,8 @@ class Ctor extends UIBase {
         return this._textField.value;
     }
     set value(value) {
-        this._textField.model.text = value;
+        var me = this;
+        me._textField.model.text = value;
         me.viewModel.redraw(true);
         return this._textField.value = value;
     }
