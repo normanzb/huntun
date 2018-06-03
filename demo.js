@@ -33,7 +33,8 @@ var prompt = new UIPrompt({
         }),
         new UITextField({
             name: 'title',
-            label: 'Link Title'
+            label: 'Link Title',
+            text: 'default title'
         }),
         new UICheckBoxField({
             name: 'target',

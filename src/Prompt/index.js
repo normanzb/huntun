@@ -123,9 +123,6 @@ var view = {
             [
             el('div.border', {
                 style: 'left: ' + model.style.left + '; top:' + model.style.top + ';',
-                onkeydown: function(){
-                    window.console.log(arguments);
-                },
                 _hooks: {
                     didInsert: function(view){
                         updatePosition(view.el, model, vm);

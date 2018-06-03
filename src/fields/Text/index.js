@@ -134,6 +134,9 @@ style.fonts.google.push(config.fields.fontFamily);
 
 var view = {
     render: function(vm, model) {
+        if (model.text) {
+            model.prvt.inputted = true;
+        }
         return el('div.' + style.id + '.' + style.modifiers[model.theme].name +
             (model.prvt.inputted?'.'+style.modifiers[MODIFIER_HAS_INPUT].name:'') + 
             (model.prvt.focused?'.'+style.modifiers[MODIFIER_HAS_FOCUS].name:''), [

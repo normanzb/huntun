@@ -34,7 +34,8 @@ var prompt = new UIPrompt({
         }),
         new UITextField({
             name: 'title',
-            label: 'Link Title'
+            label: 'Link Title',
+            text: 'default title'
         }),
         new UICheckBoxField({
             name: 'target',
@@ -4043,9 +4044,6 @@ var view = {
             [
             el('div.border', {
                 style: 'left: ' + model.style.left + '; top:' + model.style.top + ';',
-                onkeydown: function(){
-                    window.console.log(arguments);
-                },
                 _hooks: {
                     didInsert: function(view){
                         updatePosition(view.el, model, vm);
@@ -4801,6 +4799,9 @@ style.fonts.google.push(config.fields.fontFamily);
 
 var view = {
     render: function(vm, model) {
+        if (model.text) {
+            model.prvt.inputted = true;
+        }
         return el('div.' + style.id + '.' + style.modifiers[model.theme].name +
             (model.prvt.inputted?'.'+style.modifiers[MODIFIER_HAS_INPUT].name:'') + 
             (model.prvt.focused?'.'+style.modifiers[MODIFIER_HAS_FOCUS].name:''), [
@@ -5080,6 +5081,11 @@ class Ctor extends UIBase {
     }
     get value() {
         return this._textField.value;
+    }
+    set value(value) {
+        this._textField.model.text = value;
+        me.viewModel.redraw(true);
+        return this._textField.value = value;
     }
 }
 
