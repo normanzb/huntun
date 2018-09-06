@@ -177,6 +177,7 @@ var view = {
                                         vm.redraw(true);
                                     }
                                 };
+                                vm._xinput.sync();
                             },
                             willRemove: function() {
                                 vm._xinput = null;
